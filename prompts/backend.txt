@@ -1,0 +1,103 @@
+# ROLE: Principal Backend Architect & Engineer
+# PROJECT: Digital Offices Backend (Production V1)
+# OBJECTIVE: Build a high-performance, secure, "Gold Standard" Fastify Backend.
+
+You are tasked with building a scalable backend using Node.js, Fastify v5, and TypeScript. The core architectural requirement is a **"Siloed Identity"** system where users, experts, organizations, and admins exist in completely separate database tables to allow for distinct data structures and independent lifecycles.
+
+---
+
+## 1. TECH STACK & STRICT CONFIGURATION
+All code must comply with these versions and libraries:
+
+- **Runtime:** Node.js (Latest LTS).
+- **Framework:** Fastify v5+ (Use `await app.register(...)`).
+- **Language:** TypeScript (Strict Mode, `noImplicitAny`, `no-unused-vars`).
+- **Database:** PostgreSQL (Hosted on Supabase).
+- **ORM:** Prisma v7 (MUST use `@prisma/adapter-pg` with a `pg.Pool` for serverless compatibility).
+- **Caching & Rate Limit:** Redis (via `@fastify/redis` and `@fastify/rate-limit`).
+- **Validation:** Zod (via `fastify-type-provider-zod`).
+- **Scheduling:** `@fastify/schedule` with `toad-scheduler`.
+- **Email:** Nodemailer (SMTP).
+- **Utilities:** `bcryptjs`, `unique-names-generator`, `email-validator` (strict mode), `google-auth-library`.
+
+---
+
+## 2. DATABASE ARCHITECTURE (SILOED IDENTITY)
+**Do not** create a single `User` table. You must define 4 distinct identity models in `schema.prisma`.
+
+### A. The 4 Identity Models
+Each model (`User`, `Expert`, `Organization`, `Admin`) must contain these **Base Fields**:
+- `id` (UUID, PK)
+- `email` (Unique, Indexed)
+- `passwordHash` (Nullable)
+- `googleId` (Nullable, Unique - for OAuth)
+- `isBlocked` (Boolean, default false)
+- `deletedAt` (DateTime? - For Soft Delete)
+- `emailVerifiedAt` (DateTime? - Null means unverified)
+- `emailVerificationToken` (String?)
+- `createdAt`, `updatedAt`
+
+**Specific Fields per Role:**
+1.  **User:** `name`, `avatarUrl`, `promotionalEmailsEnabled`.
+2.  **Expert:** `name`, `username` (Unique), `avatarUrl`, `headline`, `bio`, `hourlyRate` (Decimal), `specialties` (String[]), `isVerified` (Boolean).
+3.  **Organization:** `companyName`, `logoUrl`, `websiteUrl`, `regNumber`.
+4.  **Admin:** `name`, `role` (Enum: SUPER_ADMIN, MODERATOR).
+
+### B. Session Management
+Create a centralized `RefreshSession` table used for Dual-Token Auth.
+- `id` (UUID)
+- `tokenHash` (String, Unique - Store the hash, not the token)
+- `expiresAt` (DateTime)
+- `ipAddress`, `userAgent`
+- **Polymorphic Relations:** Nullable Foreign Keys to all 4 roles (`userId`, `expertId`, `organizationId`, `adminId`).
+- Constraint: Ensure only one ID is populated per row (application logic).
+
+---
+
+## 3. AUTHENTICATION IMPLEMENTATION (GOLD STANDARD)
+
+### A. Global Auth Standards
+- **Dual Tokens:**
+  - **Access Token:** JWT (15 min expiry). Payload includes `id` and `role` type.
+  - **Refresh Token:** Cryptographically secure random string (7 day expiry).
+- **Cookies:**
+  - Use `httpOnly`, `secure` (in prod), `sameSite: 'lax'`.
+  - **Domain:** Must be set to `.digitaloffices.com.au` in production to allow subdomain access.
+
+### B. Registration Flow (Route: POST /auth/{role}/register)
+1.  **Validate:** strict Zod schema.
+    - Check for disposable emails (block temp mail).
+    - Enforce password complexity (min 8 chars, 1 number, 1 symbol).
+2.  **Uniqueness:** Check if email exists in the specific role table.
+3.  **Username:** Auto-generate a unique handle (e.g., `@happy_sky_22`) using `unique-names-generator`.
+4.  **Create:** Insert into DB with `emailVerifiedAt: null`.
+5.  **Notify:** Generate a secure token and send a verification email (mock if SMTP not provided).
+
+### C. Login Flow (Route: POST /auth/{role}/login)
+1.  **Verify Credentials:** Bcrypt compare.
+2.  **Check Verification:** If `emailVerifiedAt` is null, BLOCK login (403 Forbidden).
+3.  **Check Soft Delete:** If `deletedAt` is set, BLOCK login.
+4.  **Issue Tokens:** Set HttpOnly cookies.
+
+### D. Google OAuth (Hybrid Flow)
+- **Route:** `POST /auth/{role}/google`
+- **Logic:** Frontend sends ID Token -> Backend verifies with Google -> Backend finds/creates account -> Backend issues Session Cookies.
+- **Auto-Verification:** Google-authenticated users are automatically marked as verified.
+
+---
+
+## 4. BACKGROUND JOBS & MAINTENANCE
+- **Library:** Use `@fastify/schedule` with `toad-scheduler`.
+- **Job:** `cleanup-unverified-users`
+- **Logic:** Run every hour. Hard-delete any account where `emailVerifiedAt` is NULL and `createdAt` is older than 24 hours.
+
+---
+
+## 5. PASSWORD MANAGEMENT
+- **Forgot Password:** Generate short-lived token (15 mins). Send Email.
+- **Reset Password:** Verify token -> Hash new password -> Update DB -> **Revoke all existing RefreshSessions** (Security Critical).
+
+---
+
+## 6. PROJECT STRUCTURE & QUALITY
+Follow this modular structure strictly:
