@@ -67,6 +67,6 @@ export async function userRoutes(app: FastifyInstance) {
         },
       },
     },
-    userController.updateMeHandler
+    userController.updateMeHandler as any
   );
 }

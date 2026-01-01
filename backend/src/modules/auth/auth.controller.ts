@@ -7,7 +7,6 @@ import {
   ExpertRegisterInput, 
   OrganizationRegisterInput, 
   LoginInput,
-  JwtPayload
 } from '../../../../shared/types.js';
 import { env } from '../../env.js';
 

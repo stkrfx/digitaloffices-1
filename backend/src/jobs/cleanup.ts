@@ -83,6 +83,5 @@ export const cleanupJob = new SimpleIntervalJob(
  * Register the job with the Fastify instance
  */
 export function registerCleanupJob(app: FastifyInstance) {
-  // @ts-expect-error - fastify-schedule types can be tricky with the decorator
   app.scheduler.addSimpleIntervalJob(cleanupJob);
 }

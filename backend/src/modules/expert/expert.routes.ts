@@ -74,6 +74,6 @@ export async function expertRoutes(app: FastifyInstance) {
         },
       },
     },
-    expertController.updateProfileHandler
+    expertController.updateProfileHandler as any
   );
 }

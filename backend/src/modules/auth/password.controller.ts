@@ -1,5 +1,4 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { z } from 'zod';
 import * as passwordService from './password.service.js';
 import { Role, ROLES } from '../../../../shared/types.js';
 

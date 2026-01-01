@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify, { FastifyInstance, FastifyError } from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import cookie from '@fastify/cookie';
@@ -86,7 +86,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(fastifySchedule);
 
   // 9. Global Error Handler
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     // Log error
     request.log.error(error);
 

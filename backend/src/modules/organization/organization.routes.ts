@@ -69,6 +69,6 @@ export async function organizationRoutes(app: FastifyInstance) {
         },
       },
     },
-    organizationController.updateMeHandler
+    organizationController.updateMeHandler as any
   );
 }
