@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --------------------------------------
+// ENUMS
+// --------------------------------------
+
+enum AdminRole {
+  SUPER_ADMIN
+  MODERATOR
+}
+
+// --------------------------------------
+// IDENTITY MODELS (SILOED)
+// --------------------------------------
+
+// 1. USER
+model User {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String?
+  googleId               String?   @unique
+  isBlocked              Boolean   @default(false)
+  deletedAt              DateTime? // Soft Delete
+  emailVerifiedAt        DateTime?
+  emailVerificationToken String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // User Specific Fields
+  name                     String
+  avatarUrl                String?
+  promotionalEmailsEnabled Boolean @default(false)
+
+  // Relations
+  refreshSessions RefreshSession[]
+
+  @@index([email])
+}
+
+// 2. EXPERT
+model Expert {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String?
+  googleId               String?   @unique
+  isBlocked              Boolean   @default(false)
+  deletedAt              DateTime? // Soft Delete
+  emailVerifiedAt        DateTime?
+  emailVerificationToken String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Expert Specific Fields
+  name        String
+  username    String   @unique
+  avatarUrl   String?
+  headline    String?
+  bio         String?
+  hourlyRate  Decimal? @db.Decimal(10, 2)
+  specialties String[]
+  isVerified  Boolean  @default(false)
+
+  // Relations
+  refreshSessions RefreshSession[]
+
+  @@index([email])
+  @@index([username])
+}
+
+// 3. ORGANIZATION
+model Organization {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String?
+  googleId               String?   @unique
+  isBlocked              Boolean   @default(false)
+  deletedAt              DateTime? // Soft Delete
+  emailVerifiedAt        DateTime?
+  emailVerificationToken String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Organization Specific Fields
+  companyName String
+  logoUrl     String?
+  websiteUrl  String?
+  regNumber   String?
+
+  // Relations
+  refreshSessions RefreshSession[]
+
+  @@index([email])
+}
+
+// 4. ADMIN
+model Admin {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String?
+  googleId               String?   @unique // Kept for consistency, though likely unused for Admins
+  isBlocked              Boolean   @default(false)
+  deletedAt              DateTime? // Soft Delete
+  emailVerifiedAt        DateTime?
+  emailVerificationToken String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Admin Specific Fields
+  name String
+  role AdminRole
+
+  // Relations
+  refreshSessions RefreshSession[]
+
+  @@index([email])
+}
+
+// --------------------------------------
+// SESSION MANAGEMENT
+// --------------------------------------
+
+model RefreshSession {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique // Store hash, not raw token
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // Polymorphic Relations (Only one should be set)
+  userId         String?
+  expertId       String?
+  organizationId String?
+  adminId        String?
+
+  User         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Expert       Expert?       @relation(fields: [expertId], references: [id], onDelete: Cascade)
+  Organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Admin        Admin?        @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  // Application logic must ensure exactly one FK is populated
+  @@index([userId])
+  @@index([expertId])
+  @@index([organizationId])
+  @@index([adminId])
+}
