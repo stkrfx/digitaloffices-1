@@ -68,17 +68,17 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
     const delegate = getPrismaDelegate(role);
     const { email, password } = data;
 
+    const disposableDomains = ['tempmail.com', 'mailinator.com', 'guerrillamail.com']; // Extend this list
+    const domain = email.split('@')[1];
+    if (disposableDomains.includes(domain)) {
+        throw new Error('Disposable email addresses are not allowed.');
+    }
+
     // 1. Check Uniqueness (Email)
     // @ts-expect-error - Prisma delegates share 'findUnique' signature for email
     const existing = await delegate.findUnique({ where: { email } });
     if (existing) {
         throw new Error('Email already registered for this account type.');
-    }
-
-    const disposableDomains = ['tempmail.com', 'mailinator.com', 'guerrillamail.com']; // Extend this list
-    const domain = email.split('@')[1];
-    if (disposableDomains.includes(domain)) {
-        throw new Error('Disposable email addresses are not allowed.');
     }
 
     // 2. Hash Password
@@ -107,6 +107,7 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
         // Auto-generate username if not provided or just force generation based on requirements
         // Prompt says: "Auto-generate a unique handle" 
         // However, schema Input has 'username'. We prioritize auto-generation to match prompt strictly.
+        
         const username = await generateUniqueUsername();
 
         result = await prisma.expert.create({
@@ -233,20 +234,21 @@ export async function refresh(refreshToken: string, ipAddress: string, userAgent
         throw new Error('Invalid or expired refresh token');
     }
 
-    // 2. Identify User & Role from Polymorphic Relation
+    // 2. Identify User & Role
+    const roleMap = { User: ROLES.USER, Expert: ROLES.EXPERT, Organization: ROLES.ORGANIZATION, Admin: ROLES.ADMIN };
     let account: any = null;
     let role: Role | null = null;
 
-    if (session.User) { account = session.User; role = ROLES.USER; }
-    else if (session.Expert) { account = session.Expert; role = ROLES.EXPERT; }
-    else if (session.Organization) { account = session.Organization; role = ROLES.ORGANIZATION; }
-    else if (session.Admin) { account = session.Admin; role = ROLES.ADMIN; }
-
-    if (!account || !role) throw new Error('Orphaned session');
-
-    // 3. Security Checks (Re-check on refresh)
-    if (account.isBlocked || account.deletedAt) throw new Error('Account unavailable');
-
+    for (const [key, r] of Object.entries(roleMap)) {
+        if ((session as any)[key]) {
+            account = (session as any)[key];
+            role = r as Role;
+            break;
+        }
+    }
+    
+    if (!account?.id || !role) throw new Error('Orphaned session');
+    
     // 4. Rotate Token (Security Best Practice)
     // Delete old session
     await prisma.refreshSession.delete({ where: { id: session.id } });

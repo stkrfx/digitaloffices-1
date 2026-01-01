@@ -20,7 +20,6 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 chars"),
   // Refresh Token Secret (Long-lived, used for hashing/signing if needed, though we store opaque hashes)
   // Even if we store opaque strings, having a server-side secret for generation salt is good practice.
-  REFRESH_SECRET: z.string().min(32).default('default-refresh-secret-replace-in-prod'),
   
   // REDIS (Caching & Rate Limit)
   REDIS_URL: z.string().url().optional().default('redis://localhost:6379'),

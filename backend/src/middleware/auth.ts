@@ -23,7 +23,6 @@ declare module '@fastify/jwt' {
  * If invalid/missing, throws 401.
  */
 export async function authenticate(request: FastifyRequest, reply: FastifyReply) {
-    try {
         // 1. Verify JWT (Checks signature and expiration)
         // The @fastify/jwt plugin automatically looks for the cookie configured in app.ts ('accessToken')
         await request.jwtVerify();
@@ -35,16 +34,6 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
         if (!user.id || !user.role) {
             throw new Error('Invalid Token Payload');
         }
-
-    } catch (err) {
-        // If verification fails, return 401 Unauthorized
-        // The global error handler in app.ts will format this standardized response
-        reply.status(401).send({
-            success: false,
-            message: 'Unauthorized: Invalid or expired access token',
-            error: { code: 'UNAUTHORIZED' },
-        });
-    }
 }
 
 /**
