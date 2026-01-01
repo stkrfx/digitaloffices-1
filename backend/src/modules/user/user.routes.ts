@@ -2,7 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import * as userController from './user.controller.js';
-import { authenticate } from '../../middleware/auth.js';
+import { authenticate, authorize } from '../../middleware/auth.js';
+import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // USER ROUTES
@@ -20,7 +21,7 @@ export async function userRoutes(app: FastifyInstance) {
   router.get(
     '/me',
     {
-      onRequest: [authenticate],
+      onRequest: [authenticate, authorize([ROLES.USER])],
       schema: {
         description: 'Get own user profile',
         tags: ['User'],
@@ -47,7 +48,7 @@ export async function userRoutes(app: FastifyInstance) {
   router.patch(
     '/me',
     {
-      onRequest: [authenticate],
+      onRequest: [authenticate, authorize([ROLES.USER])],
       schema: {
         description: 'Update own user profile',
         tags: ['User'],

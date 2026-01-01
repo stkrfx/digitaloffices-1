@@ -30,13 +30,6 @@ export async function getMeHandler(
 ) {
   const user = request.user; // From authenticate middleware
 
-  if (user.role !== ROLES.USER) {
-    return reply.status(403).send({
-      success: false,
-      message: 'Access restricted to Users',
-    });
-  }
-
   const profile = await userService.getUserById(user.id);
 
   return reply.status(200).send({

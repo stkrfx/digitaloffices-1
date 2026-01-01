@@ -31,13 +31,6 @@ export async function getMeHandler(
 ) {
   const user = request.user; // From authenticate middleware
 
-  if (user.role !== ROLES.ORGANIZATION) {
-    return reply.status(403).send({
-      success: false,
-      message: 'Access restricted to Organizations',
-    });
-  }
-
   const profile = await organizationService.getOrganizationById(user.id);
 
   return reply.status(200).send({

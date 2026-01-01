@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import * as expertService from './expert.service.js';
-import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // EXPERT CONTROLLER
@@ -53,14 +52,6 @@ export async function updateProfileHandler(
   // User is attached by 'authenticate' middleware
   const user = request.user;
   const redis = request.server.redis;
-
-  // 1. Authorization Check (Double check role)
-  if (user.role !== ROLES.EXPERT) {
-    return reply.status(403).send({
-      success: false,
-      message: 'Only experts can update expert profiles',
-    });
-  }
 
   // 2. Update
   const updatedExpert = await expertService.updateExpertProfile(

@@ -2,7 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import * as expertController from './expert.controller.js';
-import { authenticate } from '../../middleware/auth.js';
+import { authenticate, authorize } from '../../middleware/auth.js';
+import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // EXPERT ROUTES
@@ -37,7 +38,7 @@ export async function expertRoutes(app: FastifyInstance) {
               avatarUrl: z.string().nullable(),
               headline: z.string().nullable(),
               bio: z.string().nullable(),
-              hourlyRate: z.any(), // Decimal types can be tricky in JSON, often string/number
+              hourlyRate: z.number().nullable(), // Decimal types can be tricky in JSON, often string/number
               specialties: z.array(z.string()),
               isVerified: z.boolean(),
               createdAt: z.date(),
@@ -54,7 +55,7 @@ export async function expertRoutes(app: FastifyInstance) {
   router.patch(
     '/me',
     {
-      onRequest: [authenticate],
+      onRequest: [authenticate, authorize([ROLES.EXPERT])],
       schema: {
         description: 'Update own expert profile',
         tags: ['Expert'],
@@ -67,7 +68,7 @@ export async function expertRoutes(app: FastifyInstance) {
               id: z.string(),
               headline: z.string().nullable(),
               bio: z.string().nullable(),
-              hourlyRate: z.any(),
+              hourlyRate: z.number().nullable(),
               specialties: z.array(z.string()),
             }),
           }),

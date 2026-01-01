@@ -2,7 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import * as organizationController from './organization.controller.js';
-import { authenticate } from '../../middleware/auth.js';
+import { authenticate, authorize } from '../../middleware/auth.js';
+import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // ORGANIZATION ROUTES
@@ -14,61 +15,61 @@ import { authenticate } from '../../middleware/auth.js';
 // --------------------------------------------------------------------------
 
 export async function organizationRoutes(app: FastifyInstance) {
-  const router = app.withTypeProvider<ZodTypeProvider>();
+    const router = app.withTypeProvider<ZodTypeProvider>();
 
-  // GET /organizations/me
-  router.get(
-    '/me',
-    {
-      onRequest: [authenticate],
-      schema: {
-        description: 'Get own organization profile',
-        tags: ['Organization'],
-        response: {
-          200: z.object({
-            success: z.boolean(),
-            data: z.object({
-              id: z.string(),
-              email: z.string(),
-              companyName: z.string(),
-              logoUrl: z.string().nullable(),
-              websiteUrl: z.string().nullable(),
-              regNumber: z.string().nullable(),
-              createdAt: z.date(),
-              googleId: z.string().nullable(),
-            }),
-          }),
+    // GET /organizations/me
+    router.get(
+        '/me',
+        {
+            onRequest: [authenticate, authorize([ROLES.ORGANIZATION])],
+            schema: {
+                description: 'Get own organization profile',
+                tags: ['Organization'],
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            id: z.string(),
+                            email: z.string(),
+                            companyName: z.string(),
+                            logoUrl: z.string().nullable(),
+                            websiteUrl: z.string().nullable(),
+                            regNumber: z.string().nullable(),
+                            createdAt: z.date(),
+                            googleId: z.string().nullable(),
+                        }),
+                    }),
+                },
+            },
         },
-      },
-    },
-    organizationController.getMeHandler
-  );
+        organizationController.getMeHandler
+    );
 
-  // PATCH /organizations/me
-  router.patch(
-    '/me',
-    {
-      onRequest: [authenticate],
-      schema: {
-        description: 'Update own organization profile',
-        tags: ['Organization'],
-        body: organizationController.UpdateOrganizationProfileSchema,
-        response: {
-          200: z.object({
-            success: z.boolean(),
-            message: z.string(),
-            data: z.object({
-              id: z.string(),
-              email: z.string(),
-              companyName: z.string(),
-              logoUrl: z.string().nullable(),
-              websiteUrl: z.string().nullable(),
-              regNumber: z.string().nullable(),
-            }),
-          }),
+    // PATCH /organizations/me
+    router.patch(
+        '/me',
+        {
+            onRequest: [authenticate, authorize([ROLES.ORGANIZATION])],
+            schema: {
+                description: 'Update own organization profile',
+                tags: ['Organization'],
+                body: organizationController.UpdateOrganizationProfileSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        message: z.string(),
+                        data: z.object({
+                            id: z.string(),
+                            email: z.string(),
+                            companyName: z.string(),
+                            logoUrl: z.string().nullable(),
+                            websiteUrl: z.string().nullable(),
+                            regNumber: z.string().nullable(),
+                        }),
+                    }),
+                },
+            },
         },
-      },
-    },
-    organizationController.updateMeHandler as any
-  );
+        organizationController.updateMeHandler as any
+    );
 }

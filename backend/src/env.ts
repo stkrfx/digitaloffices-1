@@ -37,7 +37,7 @@ const envSchema = z.object({
   // EMAIL (SMTP)
   // If not provided, we will mock emails as per prompt instructions, 
   // but schema allows them to be optional for dev.
-  SMTP_HOST: z.string().optional(),
+  SMTP_HOST: z.string().optional().refine((val) => process.env.NODE_ENV !== 'production' || !!val, "SMTP_HOST is required in production"),
   SMTP_PORT: z.coerce.number().optional(),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
