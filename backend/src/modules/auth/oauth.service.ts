@@ -7,6 +7,7 @@ import {
 import { verifyGoogleToken } from '../../utils/google.js';
 import { generateRandomToken, hashToken } from '../../utils/crypto.js';
 import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { Prisma } from '../../generated/prisma/client';
 
 // --------------------------------------------------------------------------
 // OAUTH SERVICE
@@ -46,6 +47,13 @@ async function generateUniqueUsername(): Promise<string> {
     return username;
 }
 
+interface CreateSessionInput extends Omit<Prisma.RefreshSessionCreateInput, 'User' | 'Expert' | 'Organization' | 'Admin'> {
+    userId?: string;
+    expertId?: string;
+    organizationId?: string;
+    adminId?: string;
+}
+
 export async function loginWithGoogle(role: Role, idToken: string, ipAddress: string, userAgent: string) {
     if (role === ROLES.ADMIN) throw new Error('Admin OAuth not permitted');
 
@@ -53,13 +61,20 @@ export async function loginWithGoogle(role: Role, idToken: string, ipAddress: st
     const googleUser = await verifyGoogleToken(idToken);
     const { email, googleId, name, avatarUrl } = googleUser;
 
-    const delegate = getPrismaDelegate(role);
+    // Instead of @ts-expect-error, use an explicit type for the account
+    type AuthAccount = {
+        id: string;
+        email: string;
+        googleId: string | null;
+        isBlocked: boolean;
+        deletedAt: Date | null;
+        emailVerifiedAt: Date | null;
+        name?: string;        // Add this
+    companyName?: string; // Add this
+    };
 
-    // 2. Find or Create Account
-    // @ts-expect-error - Dynamic delegate
-    let account = await delegate.findUnique({
-        where: { email }, // Check by email first to link accounts
-    });
+    const delegate = getPrismaDelegate(role) as any; // Temporary cast for the delegate wrapper
+    let account = await (delegate.findUnique({ where: { email } }) as Promise<AuthAccount | null>);
 
     if (account) {
         // 2a. Account exists
@@ -68,11 +83,10 @@ export async function loginWithGoogle(role: Role, idToken: string, ipAddress: st
 
         // Link Google ID if not already linked
         if (!account.googleId) {
-            // @ts-expect-error - Dynamic delegate
-            account = await delegate.update({
+            account = await (delegate.update({
                 where: { id: account.id },
-                data: { googleId, emailVerifiedAt: account.emailVerifiedAt || new Date() }, // Ensure verified 
-            });
+                data: { googleId, emailVerifiedAt: account.emailVerifiedAt || new Date() },
+            }) as Promise<AuthAccount>);
         }
     } else {
         // 2b. Create new account (JIT)
@@ -110,18 +124,21 @@ export async function loginWithGoogle(role: Role, idToken: string, ipAddress: st
     const refreshTokenHash = hashToken(refreshToken);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const sessionData: any = {
+    const sessionData: CreateSessionInput = {
         tokenHash: refreshTokenHash,
         expiresAt,
         ipAddress,
         userAgent,
     };
 
+    // Set the correct foreign key based on role
     if (role === ROLES.USER) sessionData.userId = account.id;
-    if (role === ROLES.EXPERT) sessionData.expertId = account.id;
-    if (role === ROLES.ORGANIZATION) sessionData.organizationId = account.id;
+    else if (role === ROLES.EXPERT) sessionData.expertId = account.id;
+    else if (role === ROLES.ORGANIZATION) sessionData.organizationId = account.id;
 
-    await prisma.refreshSession.create({ data: sessionData });
+    await prisma.refreshSession.create({
+        data: sessionData as Prisma.RefreshSessionCreateInput
+    });
 
     return {
         accessTokenPayload: payload,
@@ -129,7 +146,7 @@ export async function loginWithGoogle(role: Role, idToken: string, ipAddress: st
         account: {
             id: account.id,
             email: account.email,
-            name: (account as any).name || (account as any).companyName,
+            name: account.name || account.companyName || '', // No more 'any'
         }
     };
 }

@@ -4,6 +4,7 @@ import { Role, ROLES } from '../../../../shared/types.js';
 import { hashPassword } from '../../utils/crypto.js';
 import { sendPasswordResetEmail } from '../../utils/mailer.js';
 import { env } from '../../env.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
 // --------------------------------------------------------------------------
 // PASSWORD MANAGEMENT SERVICE
@@ -36,9 +37,11 @@ function getPrismaDelegate(role: Role) {
  */
 export async function forgotPassword(role: Role, email: string) {
   const delegate = getPrismaDelegate(role);
-  
-  // @ts-expect-error - Dynamic delegate
-  const account = await delegate.findUnique({ where: { email } });
+
+  // Cast the delegate to a type that has the findUnique method with an email where clause
+  const account = await (delegate as any).findUnique({
+    where: { email }
+  }) as { id: string; isBlocked: boolean; deletedAt: Date | null } | null;
 
   // Security: Always return success even if email not found to prevent enumeration
   if (!account) return;
@@ -77,15 +80,15 @@ export async function resetPassword(token: string, newPassword: string) {
   const passwordHash = await hashPassword(newPassword);
 
   // 3. Update DB
-  // @ts-expect-error - Dynamic delegate
-  await delegate.update({
+  await (delegate as any).update({
     where: { id },
     data: { passwordHash },
   });
 
   // 4. Revoke All Sessions (Security Critical) 
   // We identify sessions by the specific role FK
-  const whereClause: any = {};
+  const whereClause: Prisma.RefreshSessionWhereInput = {};
+
   if (role === ROLES.USER) whereClause.userId = id;
   else if (role === ROLES.EXPERT) whereClause.expertId = id;
   else if (role === ROLES.ORGANIZATION) whereClause.organizationId = id;
