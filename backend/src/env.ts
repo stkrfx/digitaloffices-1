@@ -31,8 +31,7 @@ const envSchema = z.object({
 
   // CLIENT URLS (CORS & COOKIES)
   FRONTEND_URL: z.string().url().default('http://localhost:3000'),
-  COOKIE_DOMAIN: z.string().default('localhost'), // Set to .digitaloffices.com.au in prod
-
+  COOKIE_DOMAIN: z.string().default('localhost'),
   // EMAIL (SMTP)
   // If not provided, we will mock emails as per prompt instructions, 
   // but schema allows them to be optional for dev.
@@ -41,7 +40,18 @@ const envSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().email().default('no-reply@digitaloffices.com.au'),
-});
+}).refine(
+  (data) => {
+    if (data.NODE_ENV === 'production') {
+      return data.COOKIE_DOMAIN === '.digitaloffices.com.au';
+    }
+    return true;
+  },
+  {
+    message: "In production, COOKIE_DOMAIN must be set to '.digitaloffices.com.au' to support cross-subdomain SSO.",
+    path: ['COOKIE_DOMAIN'],
+  }
+);
 
 // Validate process.env
 // We use safeParse to log all errors at once if multiple are missing

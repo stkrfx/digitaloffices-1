@@ -1,4 +1,3 @@
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 import { prisma } from '../../db/index.js';
 import {
     Role,
@@ -11,6 +10,8 @@ import {
 } from '../../../../shared/types.js';
 import { hashPassword, verifyPassword, generateRandomToken, hashToken } from '../../utils/crypto.js';
 import { sendVerificationEmail } from '../../utils/mailer.js'
+import { getPrismaDelegate } from '../../db/index.js';
+import { generateUniqueUsername } from '../../utils/username.js';
 
 // --------------------------------------------------------------------------
 // AUTHENTICATION SERVICE
@@ -22,42 +23,6 @@ import { sendVerificationEmail } from '../../utils/mailer.js'
 // - Secure Session Management (Refresh Token Hashing) 
 // - Username Generation for Experts 
 // --------------------------------------------------------------------------
-
-// Helpers to select the correct Prisma delegate based on role
-function getPrismaDelegate(role: Role) {
-    switch (role) {
-        case ROLES.USER: return prisma.user;
-        case ROLES.EXPERT: return prisma.expert;
-        case ROLES.ORGANIZATION: return prisma.organization;
-        case ROLES.ADMIN: return prisma.admin;
-        default: throw new Error(`Invalid role: ${role}`);
-    }
-}
-
-/**
- * GENERATE UNIQUE USERNAME (Expert Only)
- * Uses 'unique-names-generator' to create handles like 'happy_sky_22'
- */
-async function generateUniqueUsername(): Promise<string> {
-    let username: string;
-    let exists = true;
-
-    // Retry loop to ensure uniqueness
-    do {
-        const name = uniqueNamesGenerator({
-            dictionaries: [adjectives, colors, animals],
-            separator: '_',
-            length: 2,
-        });
-        const number = Math.floor(Math.random() * 100);
-        username = `${name}_${number}`; // e.g., 'red_lion_45'
-
-        const count = await prisma.expert.count({ where: { username } });
-        exists = count > 0;
-    } while (exists);
-
-    return username;
-}
 
 /**
  * REGISTER

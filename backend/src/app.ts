@@ -10,6 +10,12 @@ import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-
 import { ZodError } from 'zod';
 import { env } from './env.js';
 import { disconnectDB } from './db/index.js';
+import { authRoutes } from './modules/auth/auth.routes.js';
+import { oauthRoutes } from './modules/auth/oauth.routes.js';
+import { passwordRoutes } from './modules/auth/password.routes.js';
+import { userRoutes } from './modules/user/user.routes.js';
+import { expertRoutes } from './modules/expert/expert.routes.js';
+import { organizationRoutes } from './modules/organization/organization.routes.js';
 
 // --------------------------------------------------------------------------
 // APPLICATION FACTORY
@@ -91,6 +97,17 @@ export async function buildApp(): Promise<FastifyInstance> {
 
     // 8. Scheduling (Cron Jobs)
     await app.register(fastifySchedule);
+
+    // 9. Feature Module Routes
+    // All Auth-related routes (Registration, Login, Refresh, Password Reset, OAuth)
+    await app.register(authRoutes, { prefix: '/auth' });
+    await app.register(oauthRoutes, { prefix: '/auth' });
+    await app.register(passwordRoutes, { prefix: '/auth' });
+
+    // Resource-specific routes
+    await app.register(userRoutes, { prefix: '/users' });
+    await app.register(expertRoutes, { prefix: '/experts' });
+    await app.register(organizationRoutes, { prefix: '/organizations' });
 
     // 9. Global Error Handler
     app.setErrorHandler((error: FastifyError, request, reply) => {

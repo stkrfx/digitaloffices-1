@@ -6,8 +6,9 @@ import {
 } from '../../../../shared/types.js';
 import { verifyGoogleToken } from '../../utils/google.js';
 import { generateRandomToken, hashToken } from '../../utils/crypto.js';
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 import { Prisma } from '../../generated/prisma/client';
+import { getPrismaDelegate } from '../../db/index.js';
+import { generateUniqueUsername } from '../../utils/username.js';
 
 // --------------------------------------------------------------------------
 // OAUTH SERVICE
@@ -19,33 +20,6 @@ import { Prisma } from '../../generated/prisma/client';
 // - Auto-verifies email for Google users 
 // - Generates Dual Tokens (Access + Refresh) 
 // --------------------------------------------------------------------------
-
-function getPrismaDelegate(role: Role) {
-    switch (role) {
-        case ROLES.USER: return prisma.user;
-        case ROLES.EXPERT: return prisma.expert;
-        case ROLES.ORGANIZATION: return prisma.organization;
-        case ROLES.ADMIN: return prisma.admin;
-        default: throw new Error('Invalid role');
-    }
-}
-
-/**
- * GENERATE UNIQUE USERNAME (Expert Only)
- * Duplicated logic from auth.service to keep this module self-contained or reusable.
- */
-async function generateUniqueUsername(): Promise<string> {
-    let username: string;
-    let exists = true;
-    do {
-        const name = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals], separator: '_', length: 2 });
-        const number = Math.floor(Math.random() * 100);
-        username = `${name}_${number}`;
-        const count = await prisma.expert.count({ where: { username } });
-        exists = count > 0;
-    } while (exists);
-    return username;
-}
 
 interface CreateSessionInput extends Omit<Prisma.RefreshSessionCreateInput, 'User' | 'Expert' | 'Organization' | 'Admin'> {
     userId?: string;
