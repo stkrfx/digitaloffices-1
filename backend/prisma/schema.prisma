@@ -31,6 +31,12 @@ enum ThemePreference {
   SYSTEM
 }
 
+// Gold Standard: Explicitly define supported currencies to prevent calculation errors
+enum Currency {
+  AUD
+  USD
+}
+
 // --------------------------------------
 // IDENTITY MODELS (SILOED)
 // --------------------------------------
@@ -47,12 +53,10 @@ model User {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  // User Specific Fields
   name                     String
   avatarUrl                String?
   promotionalEmailsEnabled Boolean @default(false)
 
-  // Relations
   refreshSessions RefreshSession[]
   bookings        Booking[]
   reviews         Review[]
@@ -73,17 +77,16 @@ model Expert {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  // Expert Specific Fields
   name        String
   username    String   @unique
   avatarUrl   String?
   headline    String?
   bio         String?
+  // Note: All rates are stored in AUD
   hourlyRate  Decimal? @db.Decimal(10, 2)
   specialties String[]
   isVerified  Boolean  @default(false)
 
-  // Relations
   refreshSessions RefreshSession[]
   services        Service[]
   availability    Availability[]
@@ -106,13 +109,11 @@ model Organization {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  // Organization Specific Fields
   companyName String
   logoUrl     String?
   websiteUrl  String?
   regNumber   String?
 
-  // Relations
   refreshSessions RefreshSession[]
   services        Service[]
   bookings        Booking[]
@@ -149,13 +150,13 @@ model Service {
   id          String   @id @default(uuid())
   title       String
   description String?
+  // Gold Standard: Price is stored in AUD as a Decimal to maintain precision
   price       Decimal  @db.Decimal(10, 2)
-  durationMin Int // Duration in minutes
+  durationMin Int
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Ownership (Service can belong to either an Expert or an Org)
   expertId       String?
   organizationId String?
   Expert         Expert?       @relation(fields: [expertId], references: [id], onDelete: Cascade)
@@ -169,7 +170,7 @@ model Service {
 
 model Availability {
   id        String @id @default(uuid())
-  dayOfWeek Int // 0 (Sunday) to 6 (Saturday)
+  dayOfWeek Int // 0 (Sun) to 6 (Sat)
   startTime String // "09:00"
   endTime   String // "17:00"
 
@@ -189,13 +190,11 @@ model Booking {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
-  // Relations
   userId    String
   User      User    @relation(fields: [userId], references: [id])
   serviceId String
   Service   Service @relation(fields: [serviceId], references: [id])
 
-  // Cache the provider IDs for easier querying
   expertId       String?
   Expert         Expert?       @relation(fields: [expertId], references: [id])
   organizationId String?
@@ -211,7 +210,7 @@ model Booking {
 
 model Review {
   id        String   @id @default(uuid())
-  rating    Int // 1 to 5
+  rating    Int
   comment   String?
   createdAt DateTime @default(now())
 
@@ -227,9 +226,11 @@ model UserPreference {
   id       String          @id @default(uuid())
   theme    ThemePreference @default(SYSTEM)
   language String          @default("en")
-  timezone String          @default("UTC")
+  
+  // Gold Standard: Set default regional settings for the Australian market
+  timezone String          @default("Australia/Sydney")
+  currency Currency        @default(AUD)
 
-  // Polymorphic Owner
   userId         String? @unique
   expertId       String? @unique
   organizationId String? @unique
@@ -238,10 +239,6 @@ model UserPreference {
   Expert       Expert?       @relation(fields: [expertId], references: [id], onDelete: Cascade)
   Organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
-
-// --------------------------------------
-// SESSION MANAGEMENT
-// --------------------------------------
 
 model RefreshSession {
   id        String   @id @default(uuid())

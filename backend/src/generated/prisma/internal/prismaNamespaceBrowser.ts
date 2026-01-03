@@ -222,6 +222,7 @@ export const UserPreferenceScalarFieldEnum = {
   theme: 'theme',
   language: 'language',
   timezone: 'timezone',
+  currency: 'currency',
   userId: 'userId',
   expertId: 'expertId',
   organizationId: 'organizationId'

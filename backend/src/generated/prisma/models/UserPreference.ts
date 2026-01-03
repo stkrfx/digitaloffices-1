@@ -29,6 +29,7 @@ export type UserPreferenceMinAggregateOutputType = {
   theme: $Enums.ThemePreference | null
   language: string | null
   timezone: string | null
+  currency: $Enums.Currency | null
   userId: string | null
   expertId: string | null
   organizationId: string | null
@@ -39,6 +40,7 @@ export type UserPreferenceMaxAggregateOutputType = {
   theme: $Enums.ThemePreference | null
   language: string | null
   timezone: string | null
+  currency: $Enums.Currency | null
   userId: string | null
   expertId: string | null
   organizationId: string | null
@@ -49,6 +51,7 @@ export type UserPreferenceCountAggregateOutputType = {
   theme: number
   language: number
   timezone: number
+  currency: number
   userId: number
   expertId: number
   organizationId: number
@@ -61,6 +64,7 @@ export type UserPreferenceMinAggregateInputType = {
   theme?: true
   language?: true
   timezone?: true
+  currency?: true
   userId?: true
   expertId?: true
   organizationId?: true
@@ -71,6 +75,7 @@ export type UserPreferenceMaxAggregateInputType = {
   theme?: true
   language?: true
   timezone?: true
+  currency?: true
   userId?: true
   expertId?: true
   organizationId?: true
@@ -81,6 +86,7 @@ export type UserPreferenceCountAggregateInputType = {
   theme?: true
   language?: true
   timezone?: true
+  currency?: true
   userId?: true
   expertId?: true
   organizationId?: true
@@ -164,6 +170,7 @@ export type UserPreferenceGroupByOutputType = {
   theme: $Enums.ThemePreference
   language: string
   timezone: string
+  currency: $Enums.Currency
   userId: string | null
   expertId: string | null
   organizationId: string | null
@@ -195,6 +202,7 @@ export type UserPreferenceWhereInput = {
   theme?: Prisma.EnumThemePreferenceFilter<"UserPreference"> | $Enums.ThemePreference
   language?: Prisma.StringFilter<"UserPreference"> | string
   timezone?: Prisma.StringFilter<"UserPreference"> | string
+  currency?: Prisma.EnumCurrencyFilter<"UserPreference"> | $Enums.Currency
   userId?: Prisma.StringNullableFilter<"UserPreference"> | string | null
   expertId?: Prisma.StringNullableFilter<"UserPreference"> | string | null
   organizationId?: Prisma.StringNullableFilter<"UserPreference"> | string | null
@@ -208,6 +216,7 @@ export type UserPreferenceOrderByWithRelationInput = {
   theme?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   expertId?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -227,6 +236,7 @@ export type UserPreferenceWhereUniqueInput = Prisma.AtLeast<{
   theme?: Prisma.EnumThemePreferenceFilter<"UserPreference"> | $Enums.ThemePreference
   language?: Prisma.StringFilter<"UserPreference"> | string
   timezone?: Prisma.StringFilter<"UserPreference"> | string
+  currency?: Prisma.EnumCurrencyFilter<"UserPreference"> | $Enums.Currency
   User?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   Expert?: Prisma.XOR<Prisma.ExpertNullableScalarRelationFilter, Prisma.ExpertWhereInput> | null
   Organization?: Prisma.XOR<Prisma.OrganizationNullableScalarRelationFilter, Prisma.OrganizationWhereInput> | null
@@ -237,6 +247,7 @@ export type UserPreferenceOrderByWithAggregationInput = {
   theme?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   expertId?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -253,6 +264,7 @@ export type UserPreferenceScalarWhereWithAggregatesInput = {
   theme?: Prisma.EnumThemePreferenceWithAggregatesFilter<"UserPreference"> | $Enums.ThemePreference
   language?: Prisma.StringWithAggregatesFilter<"UserPreference"> | string
   timezone?: Prisma.StringWithAggregatesFilter<"UserPreference"> | string
+  currency?: Prisma.EnumCurrencyWithAggregatesFilter<"UserPreference"> | $Enums.Currency
   userId?: Prisma.StringNullableWithAggregatesFilter<"UserPreference"> | string | null
   expertId?: Prisma.StringNullableWithAggregatesFilter<"UserPreference"> | string | null
   organizationId?: Prisma.StringNullableWithAggregatesFilter<"UserPreference"> | string | null
@@ -263,6 +275,7 @@ export type UserPreferenceCreateInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   User?: Prisma.UserCreateNestedOneWithoutPreferencesInput
   Expert?: Prisma.ExpertCreateNestedOneWithoutPreferencesInput
   Organization?: Prisma.OrganizationCreateNestedOneWithoutPreferencesInput
@@ -273,6 +286,7 @@ export type UserPreferenceUncheckedCreateInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   userId?: string | null
   expertId?: string | null
   organizationId?: string | null
@@ -283,6 +297,7 @@ export type UserPreferenceUpdateInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   User?: Prisma.UserUpdateOneWithoutPreferencesNestedInput
   Expert?: Prisma.ExpertUpdateOneWithoutPreferencesNestedInput
   Organization?: Prisma.OrganizationUpdateOneWithoutPreferencesNestedInput
@@ -293,6 +308,7 @@ export type UserPreferenceUncheckedUpdateInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expertId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -303,6 +319,7 @@ export type UserPreferenceCreateManyInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   userId?: string | null
   expertId?: string | null
   organizationId?: string | null
@@ -313,6 +330,7 @@ export type UserPreferenceUpdateManyMutationInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
 }
 
 export type UserPreferenceUncheckedUpdateManyInput = {
@@ -320,6 +338,7 @@ export type UserPreferenceUncheckedUpdateManyInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expertId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -335,6 +354,7 @@ export type UserPreferenceCountOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   expertId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -345,6 +365,7 @@ export type UserPreferenceMaxOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   expertId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -355,6 +376,7 @@ export type UserPreferenceMinOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   expertId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -460,11 +482,16 @@ export type EnumThemePreferenceFieldUpdateOperationsInput = {
   set?: $Enums.ThemePreference
 }
 
+export type EnumCurrencyFieldUpdateOperationsInput = {
+  set?: $Enums.Currency
+}
+
 export type UserPreferenceCreateWithoutUserInput = {
   id?: string
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   Expert?: Prisma.ExpertCreateNestedOneWithoutPreferencesInput
   Organization?: Prisma.OrganizationCreateNestedOneWithoutPreferencesInput
 }
@@ -474,6 +501,7 @@ export type UserPreferenceUncheckedCreateWithoutUserInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   expertId?: string | null
   organizationId?: string | null
 }
@@ -499,6 +527,7 @@ export type UserPreferenceUpdateWithoutUserInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   Expert?: Prisma.ExpertUpdateOneWithoutPreferencesNestedInput
   Organization?: Prisma.OrganizationUpdateOneWithoutPreferencesNestedInput
 }
@@ -508,6 +537,7 @@ export type UserPreferenceUncheckedUpdateWithoutUserInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   expertId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -517,6 +547,7 @@ export type UserPreferenceCreateWithoutExpertInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   User?: Prisma.UserCreateNestedOneWithoutPreferencesInput
   Organization?: Prisma.OrganizationCreateNestedOneWithoutPreferencesInput
 }
@@ -526,6 +557,7 @@ export type UserPreferenceUncheckedCreateWithoutExpertInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   userId?: string | null
   organizationId?: string | null
 }
@@ -551,6 +583,7 @@ export type UserPreferenceUpdateWithoutExpertInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   User?: Prisma.UserUpdateOneWithoutPreferencesNestedInput
   Organization?: Prisma.OrganizationUpdateOneWithoutPreferencesNestedInput
 }
@@ -560,6 +593,7 @@ export type UserPreferenceUncheckedUpdateWithoutExpertInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -569,6 +603,7 @@ export type UserPreferenceCreateWithoutOrganizationInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   User?: Prisma.UserCreateNestedOneWithoutPreferencesInput
   Expert?: Prisma.ExpertCreateNestedOneWithoutPreferencesInput
 }
@@ -578,6 +613,7 @@ export type UserPreferenceUncheckedCreateWithoutOrganizationInput = {
   theme?: $Enums.ThemePreference
   language?: string
   timezone?: string
+  currency?: $Enums.Currency
   userId?: string | null
   expertId?: string | null
 }
@@ -603,6 +639,7 @@ export type UserPreferenceUpdateWithoutOrganizationInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   User?: Prisma.UserUpdateOneWithoutPreferencesNestedInput
   Expert?: Prisma.ExpertUpdateOneWithoutPreferencesNestedInput
 }
@@ -612,6 +649,7 @@ export type UserPreferenceUncheckedUpdateWithoutOrganizationInput = {
   theme?: Prisma.EnumThemePreferenceFieldUpdateOperationsInput | $Enums.ThemePreference
   language?: Prisma.StringFieldUpdateOperationsInput | string
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expertId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -623,6 +661,7 @@ export type UserPreferenceSelect<ExtArgs extends runtime.Types.Extensions.Intern
   theme?: boolean
   language?: boolean
   timezone?: boolean
+  currency?: boolean
   userId?: boolean
   expertId?: boolean
   organizationId?: boolean
@@ -636,6 +675,7 @@ export type UserPreferenceSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   theme?: boolean
   language?: boolean
   timezone?: boolean
+  currency?: boolean
   userId?: boolean
   expertId?: boolean
   organizationId?: boolean
@@ -649,6 +689,7 @@ export type UserPreferenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   theme?: boolean
   language?: boolean
   timezone?: boolean
+  currency?: boolean
   userId?: boolean
   expertId?: boolean
   organizationId?: boolean
@@ -662,12 +703,13 @@ export type UserPreferenceSelectScalar = {
   theme?: boolean
   language?: boolean
   timezone?: boolean
+  currency?: boolean
   userId?: boolean
   expertId?: boolean
   organizationId?: boolean
 }
 
-export type UserPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "language" | "timezone" | "userId" | "expertId" | "organizationId", ExtArgs["result"]["userPreference"]>
+export type UserPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "language" | "timezone" | "currency" | "userId" | "expertId" | "organizationId", ExtArgs["result"]["userPreference"]>
 export type UserPreferenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   User?: boolean | Prisma.UserPreference$UserArgs<ExtArgs>
   Expert?: boolean | Prisma.UserPreference$ExpertArgs<ExtArgs>
@@ -696,6 +738,7 @@ export type $UserPreferencePayload<ExtArgs extends runtime.Types.Extensions.Inte
     theme: $Enums.ThemePreference
     language: string
     timezone: string
+    currency: $Enums.Currency
     userId: string | null
     expertId: string | null
     organizationId: string | null
@@ -1129,6 +1172,7 @@ export interface UserPreferenceFieldRefs {
   readonly theme: Prisma.FieldRef<"UserPreference", 'ThemePreference'>
   readonly language: Prisma.FieldRef<"UserPreference", 'String'>
   readonly timezone: Prisma.FieldRef<"UserPreference", 'String'>
+  readonly currency: Prisma.FieldRef<"UserPreference", 'Currency'>
   readonly userId: Prisma.FieldRef<"UserPreference", 'String'>
   readonly expertId: Prisma.FieldRef<"UserPreference", 'String'>
   readonly organizationId: Prisma.FieldRef<"UserPreference", 'String'>

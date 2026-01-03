@@ -1335,6 +1335,7 @@ export const UserPreferenceScalarFieldEnum = {
   theme: 'theme',
   language: 'language',
   timezone: 'timezone',
+  currency: 'currency',
   userId: 'userId',
   expertId: 'expertId',
   organizationId: 'organizationId'
@@ -1491,6 +1492,20 @@ export type EnumThemePreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'ThemePreference[]'
  */
 export type ListEnumThemePreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ThemePreference[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Currency'
+ */
+export type EnumCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Currency'>
+    
+
+
+/**
+ * Reference to a field of type 'Currency[]'
+ */
+export type ListEnumCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Currency[]'>
     
 
 

@@ -12,7 +12,7 @@ import { hashPassword, verifyPassword, generateRandomToken, hashToken } from '..
 import { sendVerificationEmail } from '../../utils/mailer.js'
 import { getPrismaDelegate } from '../../db/index.js';
 import { generateUniqueUsername } from '../../utils/username.js';
-// [NEW] Import our professional error classes
+import { validateEmailProfessional } from '../../utils/email-validator.js';
 import { 
     BadRequestError, 
     ConflictError, 
@@ -21,32 +21,33 @@ import {
 } from '../../utils/errors.js';
 
 /**
- * AUTHENTICATION SERVICE
+ * AUTHENTICATION SERVICE (GOLD STANDARD)
  * Standards: 
- * - Generic Login Failures: We use the same error message for "user not found" and "wrong password" 
- * to prevent User Enumeration attacks.
- * - Domain-Driven Errors: Decouples business logic from HTTP transport layer.
+ * - Multi-Layer Validation: Syntax + Disposable List + DNS/MX Verification.
+ * - Anti-Enumeration: Generic failures for sensitive operations.
+ * - Precision: Decimal handling for financial data (AUD).
  */
 
 export async function register(role: Role, data: UserRegisterInput | ExpertRegisterInput | OrganizationRegisterInput) {
     const delegate = getPrismaDelegate(role);
-    const { email, password } = data;
+    const email = data.email.trim().toLowerCase(); // Normalize immediately
 
-    // 1. Validate Email Domain
-    const disposableDomains = ['tempmail.com', 'mailinator.com']; 
-    const domain = email.split('@')[1];
-    if (disposableDomains.includes(domain)) {
-        throw new BadRequestError('Disposable email addresses are not allowed.');
+    // 1. Professional Multi-Layer Email Validation
+    const emailValidation = await validateEmailProfessional(email);
+    if (!emailValidation.isValid) {
+        throw new BadRequestError(emailValidation.reason || 'Invalid email address.');
     }
 
     // 2. Check Uniqueness
     // @ts-expect-error - Prisma delegates share 'findUnique' signature
     const existing = await delegate.findUnique({ where: { email } });
     if (existing) {
-        throw new ConflictError('Email already registered for this account type.');
+        // Gold Standard: In some highly secure systems, you might return a success message 
+        // even if the user exists to prevent enumeration. For SaaS, a ConflictError is standard UX.
+        throw new ConflictError('This email is already registered.');
     }
 
-    const passwordHash = await hashPassword(password);
+    const passwordHash = await hashPassword(data.password);
     const emailVerificationToken = generateRandomToken();
 
     const commonData = {
@@ -60,7 +61,12 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
     if (role === ROLES.USER) {
         const input = data as UserRegisterInput;
         result = await prisma.user.create({
-            data: { ...commonData, name: input.name }
+            data: { 
+                ...commonData, 
+                name: input.name,
+                // Initialize default preferences (localized to Australia/Sydney)
+                preferences: { create: {} } 
+            }
         });
     } else if (role === ROLES.EXPERT) {
         const input = data as ExpertRegisterInput;
@@ -70,6 +76,7 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
                 ...commonData,
                 name: input.name,
                 username,
+                preferences: { create: {} }
             }
         });
     } else if (role === ROLES.ORGANIZATION) {
@@ -79,11 +86,12 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
                 ...commonData,
                 companyName: input.companyName,
                 websiteUrl: input.websiteUrl,
-                regNumber: input.regNumber
+                regNumber: input.regNumber,
+                preferences: { create: {} }
             }
         });
     } else {
-        throw new BadRequestError('Admin registration is not public.');
+        throw new BadRequestError('Account type not supported for public registration.');
     }
 
     await sendVerificationEmail(result.email, emailVerificationToken);
@@ -98,21 +106,25 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
 
 export async function login(role: Role, data: LoginInput, ipAddress: string, userAgent: string) {
     const delegate = getPrismaDelegate(role);
+    const email = data.email.trim().toLowerCase();
 
     // 1. Find Account
     // @ts-expect-error - Dynamic delegate
-    const account = await delegate.findUnique({ where: { email: data.email } });
+    const account = await delegate.findUnique({ where: { email } });
 
-    // GOLD STANDARD: Use generic "Invalid email or password" for 404/401 
-    // to prevent hackers from knowing which emails exist in your DB.
-    if (!account) {
+    // GOLD STANDARD: Prevent User Enumeration
+    // We throw the exact same error for "not found" and "wrong password"
+    if (!account || account.deletedAt) {
         throw new UnauthorizedError('Invalid email or password');
     }
 
-    if (account.isBlocked) throw new ForbiddenError('Account is blocked');
-    if (account.deletedAt) throw new UnauthorizedError('Invalid email or password'); 
-    if (!account.emailVerifiedAt) throw new ForbiddenError('Please verify your email before logging in'); 
-    if (!account.passwordHash) throw new BadRequestError('Account uses Social Login. Please use Google to sign in.');
+    if (account.isBlocked) throw new ForbiddenError('Account is blocked. Please contact support.');
+    if (!account.emailVerifiedAt) throw new ForbiddenError('Please verify your email before logging in.'); 
+    
+    // Social Login check
+    if (!account.passwordHash) {
+        throw new BadRequestError('This account is linked with Google. Please use Google Sign-In.');
+    }
 
     // 2. Verify Password
     const isValid = await verifyPassword(data.password, account.passwordHash);
@@ -120,11 +132,13 @@ export async function login(role: Role, data: LoginInput, ipAddress: string, use
         throw new UnauthorizedError('Invalid email or password');
     }
 
-    // 3. Dual Token Generation Logic
+    // 3. Dual Token Generation (JWT + Refresh Rotation)
     const payload: JwtPayload = { id: account.id, role };
     const refreshToken = generateRandomToken(64);
     const refreshTokenHash = hashToken(refreshToken);
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 Days 
+    
+    // 7-day session window
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); 
 
     const sessionData: any = {
         tokenHash: refreshTokenHash,
@@ -133,6 +147,7 @@ export async function login(role: Role, data: LoginInput, ipAddress: string, use
         userAgent,
     };
 
+    // Attach to polymorphic session
     if (role === ROLES.USER) sessionData.userId = account.id;
     if (role === ROLES.EXPERT) sessionData.expertId = account.id;
     if (role === ROLES.ORGANIZATION) sessionData.organizationId = account.id;

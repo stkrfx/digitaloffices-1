@@ -35,3 +35,11 @@ export const ThemePreference = {
 } as const
 
 export type ThemePreference = (typeof ThemePreference)[keyof typeof ThemePreference]
+
+
+export const Currency = {
+  AUD: 'AUD',
+  USD: 'USD'
+} as const
+
+export type Currency = (typeof Currency)[keyof typeof Currency]
