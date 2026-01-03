@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import * as reviewController from './review.controller.js';
-import * as reviewSchema from './review.schema.js';
+import { CreateReviewSchema, GetProviderReviewsSchema } from '../../../../shared/types.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
 import { ROLES } from '../../../../shared/types.js';
 
@@ -20,7 +20,7 @@ export async function reviewRoutes(app: FastifyInstance) {
    * Restricted: Only Users (Clients) who completed a booking can review.
    */
   app.post('/', {
-    schema: reviewSchema.createReviewSchema,
+    schema: { body: CreateReviewSchema },
     onRequest: [authenticate, authorize([ROLES.USER])],
     handler: reviewController.createReviewHandler,
   });
@@ -30,7 +30,7 @@ export async function reviewRoutes(app: FastifyInstance) {
    * Public: Displayed on Expert/Organization profile pages.
    */
   app.get('/provider/:providerId', {
-    schema: reviewSchema.getProviderReviewsSchema,
+    schema: GetProviderReviewsSchema,
     handler: reviewController.getProviderReviewsHandler,
   });
 }

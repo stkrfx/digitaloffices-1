@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as reviewService from './review.service.js';
-import { CreateReviewInput } from './review.schema.js';
+import { CreateReviewInput } from '../../../../shared/types.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------

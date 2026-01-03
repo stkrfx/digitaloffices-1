@@ -1,6 +1,6 @@
 import { prisma } from '../../db/index.js';
 import { isTimeWithinAvailability } from '../availability/availability.service.js';
-import { ROLES } from '../../../../shared/types.js';
+import { ROLES, BookingStatusType } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // BOOKING MODULE - BUSINESS LOGIC
@@ -115,7 +115,7 @@ export async function getProviderBookings(providerId: string, role: typeof ROLES
  */
 export async function updateBookingStatus(
   bookingId: string, 
-  status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED',
+  status: BookingStatusType,
   actorId: string // Ensure only involved parties can change status
 ) {
   const booking = await prisma.booking.findFirst({

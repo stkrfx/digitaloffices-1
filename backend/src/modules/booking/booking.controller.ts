@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as bookingService from './booking.service.js';
-import { CreateBookingInput, UpdateBookingStatusInput } from './booking.schema.js';
+import { CreateBookingInput, UpdateBookingStatusInput } from '../../../../shared/types.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------

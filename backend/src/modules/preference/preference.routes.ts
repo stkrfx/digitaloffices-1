@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
-import * as preferenceController from './preference.controller.ts';
-import * as preferenceSchema from './preference.schema.ts';
-import { authenticate } from '../../middleware/auth.ts';
+import * as preferenceController from './preference.controller.js';
+import { UpdatePreferenceSchema } from '../../../../shared/types.js';
+import { authenticate } from '../../middleware/auth.js';
 
 // --------------------------------------------------------------------------
 // PREFERENCE MODULE - ROUTES
@@ -28,7 +28,7 @@ export async function preferenceRoutes(app: FastifyInstance) {
    * Updates settings (Theme, Timezone, etc.) via partial update (PATCH).
    */
   app.patch('/', {
-    schema: preferenceSchema.updatePreferenceSchema,
+    schema: { body: UpdatePreferenceSchema },
     onRequest: [authenticate],
     handler: preferenceController.updatePreferencesHandler,
   });

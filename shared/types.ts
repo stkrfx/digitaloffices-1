@@ -128,3 +128,170 @@ export const UpdateOrganizationProfileSchema = z.object({
     websiteUrl: z.string().url().optional().or(z.literal("")),
     regNumber: z.string().optional(),
 });
+
+// --------------------------------------
+// DOMAIN ENUMS
+// --------------------------------------
+
+export const BOOKING_STATUS = {
+    PENDING: "PENDING",
+    CONFIRMED: "CONFIRMED",
+    CANCELLED: "CANCELLED",
+    COMPLETED: "COMPLETED",
+    NO_SHOW: "NO_SHOW",
+} as const;
+
+export type BookingStatusType = (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
+
+export const THEME_PREFERENCE = {
+    LIGHT: "LIGHT",
+    DARK: "DARK",
+    SYSTEM: "SYSTEM",
+} as const;
+
+export type ThemePreferenceType = (typeof THEME_PREFERENCE)[keyof typeof THEME_PREFERENCE];
+
+
+// --------------------------------------
+// AVAILABILITY SCHEMAS
+// --------------------------------------
+
+const timeStringRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+export const SyncAvailabilitySchema = z.object({
+    slots: z.array(
+        z.object({
+            dayOfWeek: z.number().int().min(0).max(6),
+            startTime: z.string().regex(timeStringRegex, "Invalid start time format (HH:mm)"),
+            endTime: z.string().regex(timeStringRegex, "Invalid end time format (HH:mm)"),
+        }).refine((data) => {
+            const [startH, startM] = data.startTime.split(":").map(Number);
+            const [endH, endM] = data.endTime.split(":").map(Number);
+            return endH > startH || (endH === startH && endM > startM);
+        }, {
+            message: "End time must be after start time",
+            path: ["endTime"],
+        })
+    ),
+});
+
+export type SyncAvailabilityInput = z.infer<typeof SyncAvailabilitySchema>;
+
+// --------------------------------------
+// SERVICE SCHEMAS
+// --------------------------------------
+
+const serviceCore = {
+    title: z.string().min(3, "Title must be at least 3 characters").max(100),
+    description: z.string().max(1000).optional(),
+    price: z.coerce.number().positive("Price must be a positive value"),
+    durationMin: z.coerce.number().int().min(5, "Minimum duration is 5 minutes"),
+};
+
+export const CreateServiceSchema = z.object({
+    ...serviceCore,
+    expertId: z.string().uuid().optional(),
+    organizationId: z.string().uuid().optional(),
+}).refine(data => data.expertId || data.organizationId, {
+    message: "Service must belong to either an Expert or an Organization",
+    path: ["expertId"],
+});
+
+export const UpdateServiceSchema = z.object({
+    title: serviceCore.title.optional(),
+    description: serviceCore.description.optional(),
+    price: serviceCore.price.optional(),
+    durationMin: serviceCore.durationMin.optional(),
+    isActive: z.boolean().optional(),
+});
+
+export type CreateServiceInput = z.infer<typeof CreateServiceSchema>;
+export type UpdateServiceInput = z.infer<typeof UpdateServiceSchema>;
+
+// --------------------------------------
+// BOOKING SCHEMAS
+// --------------------------------------
+
+export const CreateBookingSchema = z.object({
+    serviceId: z.string().uuid("Invalid Service ID"),
+    startTime: z.coerce.date().refine((date) => date > new Date(), {
+        message: "Booking time must be in the future",
+    }),
+});
+
+export const UpdateBookingStatusSchema = z.object({
+    status: z.nativeEnum(BOOKING_STATUS),
+});
+
+export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
+export type UpdateBookingStatusInput = z.infer<typeof UpdateBookingStatusSchema>;
+
+// --------------------------------------
+// REVIEW SCHEMAS
+// --------------------------------------
+
+export const CreateReviewSchema = z.object({
+    bookingId: z.string().uuid("Invalid Booking ID"),
+    rating: z.number().int().min(1).max(5),
+    comment: z.string().max(1000).optional(),
+});
+
+export type CreateReviewInput = z.infer<typeof CreateReviewSchema>;
+
+// --------------------------------------
+// PREFERENCE SCHEMAS
+// --------------------------------------
+
+export const UpdatePreferenceSchema = z.object({
+    theme: z.nativeEnum(THEME_PREFERENCE).optional(),
+    language: z.string().min(2).max(5).optional(),
+    timezone: z.string().refine((tz) => {
+        try {
+            Intl.DateTimeFormat(undefined, { timeZone: tz });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }, { message: "Invalid timezone" }).optional(),
+});
+
+export type UpdatePreferenceInput = z.infer<typeof UpdatePreferenceSchema>;
+
+export const GetAvailabilitySchema = z.object({
+    params: z.object({
+        expertId: z.string().uuid(),
+    }),
+});
+
+// Add to BOOKING SCHEMAS section
+export const GetProviderBookingsSchema = z.object({
+    query: z.object({
+        role: z.enum(["EXPERT", "ORGANIZATION"]),
+    }),
+});
+
+// Add to SERVICE SCHEMAS section
+export const GetServicesSchema = z.object({
+    params: z.object({
+        providerId: z.string().uuid(),
+    }),
+    query: z.object({
+        type: z.enum(["expert", "organization"]),
+    }),
+});
+
+export const DeleteServiceSchema = z.object({
+    params: z.object({
+        serviceId: z.string().uuid(),
+    }),
+});
+
+// Add to REVIEW SCHEMAS section
+export const GetProviderReviewsSchema = z.object({
+    params: z.object({
+        providerId: z.string().uuid(),
+    }),
+    query: z.object({
+        type: z.enum(["expert", "organization"]),
+    }),
+});

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as serviceService from './service.service.js';
-import { CreateServiceInput, UpdateServiceInput } from './service.schema.js';
+import { CreateServiceInput, UpdateServiceInput } from '../../../../shared/types.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------

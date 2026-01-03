@@ -1,6 +1,5 @@
 node_modules
 .env
 /../generated/prisma
-api.http
 package-lock.json
 

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as preferenceService from './preference.service.js';
-import { UpdatePreferenceInput } from './preference.schema.js';
+import { UpdatePreferenceInput } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // PREFERENCE MODULE - CONTROLLER

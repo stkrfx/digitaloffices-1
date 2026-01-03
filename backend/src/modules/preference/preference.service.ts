@@ -1,6 +1,5 @@
 import { prisma } from '../../db/index.js';
-import { ThemePreference } from '../../generated/prisma/index.js';
-import { ROLES } from '../../../../shared/types.js';
+import { ROLES, ThemePreferenceType } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // PREFERENCE MODULE - BUSINESS LOGIC
@@ -43,7 +42,7 @@ export async function updatePreferences(
   ownerId: string,
   role: string,
   data: {
-    theme?: ThemePreference;
+    theme?: ThemePreferenceType;
     language?: string;
     timezone?: string;
   }

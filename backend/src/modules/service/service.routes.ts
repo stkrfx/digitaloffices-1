@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import * as serviceController from './service.controller.js';
-import * as serviceSchema from './service.schema.js';
+import { CreateServiceSchema, UpdateServiceSchema, GetServicesSchema, DeleteServiceSchema } from '../../../../shared/types.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
 import { ROLES } from '../../../../shared/types.js';
 
@@ -20,7 +20,7 @@ export async function serviceRoutes(app: FastifyInstance) {
    * Restricted to Experts and Organizations.
    */
   app.post('/', {
-    schema: serviceSchema.createServiceSchema,
+    schema: { body: CreateServiceSchema },
     onRequest: [authenticate, authorize([ROLES.EXPERT, ROLES.ORGANIZATION])],
     handler: serviceController.createServiceHandler,
   });
@@ -30,7 +30,7 @@ export async function serviceRoutes(app: FastifyInstance) {
    * Publicly accessible for profile pages.
    */
   app.get('/:providerId', {
-    schema: serviceSchema.getServicesSchema,
+    schema: GetServicesSchema,
     handler: serviceController.getProviderServicesHandler,
   });
 
@@ -39,7 +39,7 @@ export async function serviceRoutes(app: FastifyInstance) {
    * Restricted to the owner of the service.
    */
   app.patch('/:serviceId', {
-    schema: serviceSchema.updateServiceSchema,
+    schema: { body: UpdateServiceSchema },
     onRequest: [authenticate, authorize([ROLES.EXPERT, ROLES.ORGANIZATION])],
     handler: serviceController.updateServiceHandler,
   });
@@ -49,7 +49,7 @@ export async function serviceRoutes(app: FastifyInstance) {
    * Restricted to the owner.
    */
   app.delete('/:serviceId', {
-    schema: serviceSchema.deleteServiceSchema,
+    schema: DeleteServiceSchema,
     onRequest: [authenticate, authorize([ROLES.EXPERT, ROLES.ORGANIZATION])],
     handler: serviceController.deleteServiceHandler,
   });

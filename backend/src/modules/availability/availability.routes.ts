@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import * as availabilityController from './availability.controller.js';
-import * as availabilitySchema from './availability.schema.js';
+import { SyncAvailabilitySchema, GetAvailabilitySchema } from '../../../../shared/types.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
 import { ROLES } from '../../../../shared/types.js';
 
@@ -20,7 +20,7 @@ export async function availabilityRoutes(app: FastifyInstance) {
    * Public: Needed for clients to see bookable slots on the profile page.
    */
   app.get('/:expertId', {
-    schema: availabilitySchema.getAvailabilitySchema,
+    schema: GetAvailabilitySchema,
     handler: availabilityController.getExpertAvailabilityHandler,
   });
 
@@ -29,7 +29,7 @@ export async function availabilityRoutes(app: FastifyInstance) {
    * Protected: Only the Expert themselves can update their schedule.
    */
   app.put('/', {
-    schema: availabilitySchema.syncAvailabilitySchema,
+    schema: { body: SyncAvailabilitySchema },
     onRequest: [authenticate, authorize([ROLES.EXPERT])],
     handler: availabilityController.syncAvailabilityHandler,
   });

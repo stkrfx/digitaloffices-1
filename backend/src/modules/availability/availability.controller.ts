@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as availabilityService from './availability.service.js';
-import { SyncAvailabilityInput } from './availability.schema.js';
+import { SyncAvailabilityInput } from '../../../../shared/types.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
