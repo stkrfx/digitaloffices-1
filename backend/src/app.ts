@@ -22,6 +22,8 @@ import { organizationRoutes } from './modules/organization/organization.routes.j
 import { serviceRoutes } from './modules/service/service.routes.js';
 import { availabilityRoutes } from './modules/availability/availability.routes.js';
 import { bookingRoutes } from './modules/booking/booking.routes.js';
+import { reviewRoutes } from './modules/review/review.routes.js';
+import { preferenceRoutes } from './modules/preference/preference.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
     const app = fastify({
@@ -107,6 +109,8 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(serviceRoutes, { prefix: '/services' });
     await app.register(availabilityRoutes, { prefix: '/availability' });
     await app.register(bookingRoutes, { prefix: '/bookings' });
+    await app.register(reviewRoutes, { prefix: '/reviews' });
+    await app.register(preferenceRoutes, { prefix: '/preferences' });
 
     // 10. Global Error Handler
     app.setErrorHandler((error: FastifyError, request, reply) => {
