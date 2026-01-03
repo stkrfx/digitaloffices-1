@@ -1,26 +1,35 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { z } from 'zod';
 import * as expertService from './expert.service.js';
+import { 
+  ExpertSearchInput, 
+  UpdateExpertProfileInput 
+} from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // EXPERT CONTROLLER
 // --------------------------------------------------------------------------
-// Purpose: Handle HTTP requests for Expert profiles.
+// Purpose: Orchestrate HTTP requests for Expert discovery and management.
 // Standards:
-// - Public Read access (Cached) 
-// - Protected Write access (Expert Only)
+// - Imports shared types to maintain universality.
+// - Delegated heavy lifting to the Service layer.
 // --------------------------------------------------------------------------
 
-// Schema for updating profile (Ideally this moves to shared/types.ts in a full impl)
-export const UpdateExpertProfileSchema = z.object({
-  headline: z.string().max(100).optional(),
-  bio: z.string().max(2000).optional(),
-  hourlyRate: z.number().min(0).optional(),
-  specialties: z.array(z.string()).max(10).optional(),
-  avatarUrl: z.string().url().optional(),
-});
+/**
+ * SEARCH EXPERTS HANDLER (Public)
+ * GET /experts/search
+ */
+export async function searchExpertsHandler(
+  request: FastifyRequest<{ Querystring: ExpertSearchInput }>,
+  reply: FastifyReply
+) {
+  // Gold Standard: Query logic is isolated in the service for testing and reuse
+  const result = await expertService.searchExperts(request.query);
 
-export type UpdateExpertProfileInput = z.infer<typeof UpdateExpertProfileSchema>;
+  return reply.status(200).send({
+    success: true,
+    data: result,
+  });
+}
 
 /**
  * GET PROFILE HANDLER (Public)
@@ -31,7 +40,7 @@ export async function getProfileHandler(
   reply: FastifyReply
 ) {
   const { username } = request.params;
-  const redis = request.server.redis; // Access Redis via Fastify instance
+  const redis = request.server.redis;
 
   const expert = await expertService.getExpertByUsername(username, redis);
 
@@ -49,13 +58,11 @@ export async function updateProfileHandler(
   request: FastifyRequest<{ Body: UpdateExpertProfileInput }>,
   reply: FastifyReply
 ) {
-  // User is attached by 'authenticate' middleware
   const user = request.user;
   const redis = request.server.redis;
 
-  // 2. Update
   const updatedExpert = await expertService.updateExpertProfile(
-    user.id, // The ID in the token is the Expert ID 
+    user.id, 
     request.body,
     redis
   );

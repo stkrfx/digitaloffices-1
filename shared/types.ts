@@ -116,11 +116,15 @@ export const UpdateExpertProfileSchema = z.object({
     avatarUrl: z.string().url().optional(),
 });
 
+export type UpdateExpertProfileInput = z.infer<typeof UpdateExpertProfileSchema>;
+
 export const UpdateUserProfileSchema = z.object({
     name: z.string().min(2).optional(),
     avatarUrl: z.string().url().optional(),
     promotionalEmailsEnabled: z.boolean().optional(),
 });
+
+export type UpdateUserProfileInput = z.infer<typeof UpdateUserProfileSchema>;
 
 export const UpdateOrganizationProfileSchema = z.object({
     companyName: z.string().min(2).optional(),
@@ -128,6 +132,8 @@ export const UpdateOrganizationProfileSchema = z.object({
     websiteUrl: z.string().url().optional().or(z.literal("")),
     regNumber: z.string().optional(),
 });
+
+export type UpdateOrganizationProfileInput = z.infer<typeof UpdateOrganizationProfileSchema>;
 
 // --------------------------------------
 // DOMAIN ENUMS
@@ -295,3 +301,88 @@ export const GetProviderReviewsSchema = z.object({
         type: z.enum(["expert", "organization"]),
     }),
 });
+
+// --------------------------------------
+// EXPERT SEARCH & DISCOVERY SCHEMAS
+// --------------------------------------
+
+export const ExpertSearchSchema = z.object({
+    query: z.object({
+        keyword: z.string().optional(),
+        specialties: z.union([z.string(), z.array(z.string())]).transform(val => 
+            Array.isArray(val) ? val : [val]
+        ).optional(),
+        minPrice: z.coerce.number().min(0).optional(),
+        maxPrice: z.coerce.number().min(0).optional(),
+        minRating: z.coerce.number().min(0).max(5).optional(),
+        page: z.coerce.number().int().min(1).default(1),
+        limit: z.coerce.number().int().min(1).max(100).default(20),
+        sortBy: z.enum(["rating", "price_asc", "price_desc", "newest"]).default("newest"),
+    }),
+});
+
+export type ExpertSearchInput = z.infer<typeof ExpertSearchSchema>["query"];
+
+export interface ExpertSearchResponse {
+    experts: {
+        id: string;
+        name: string;
+        username: string;
+        avatarUrl: string | null;
+        headline: string | null;
+        hourlyRate: number | null;
+        specialties: string[];
+        isVerified: boolean;
+        averageRating: number;
+        reviewCount: number;
+    }[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+}
+
+
+// --------------------------------------
+// SERVICE SEARCH & DISCOVERY SCHEMAS
+// --------------------------------------
+
+export const ServiceSearchSchema = z.object({
+    query: z.object({
+        keyword: z.string().optional(),
+        minPrice: z.coerce.number().min(0).optional(),
+        maxPrice: z.coerce.number().min(0).optional(),
+        minDuration: z.coerce.number().int().min(0).optional(),
+        maxDuration: z.coerce.number().int().min(0).optional(),
+        page: z.coerce.number().int().min(1).default(1),
+        limit: z.coerce.number().int().min(1).max(100).default(20),
+        sortBy: z.enum(["price_asc", "price_desc", "duration_asc", "newest"]).default("newest"),
+    }),
+});
+
+export type ServiceSearchInput = z.infer<typeof ServiceSearchSchema>["query"];
+
+export interface ServiceSearchResponse {
+    services: {
+        id: string;
+        title: string;
+        description: string | null;
+        price: number;
+        durationMin: number;
+        provider: {
+            id: string;
+            name: string;
+            type: "expert" | "organization";
+            avatarUrl: string | null;
+            averageRating: number;
+        };
+    }[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+}

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as serviceService from './service.service.js';
-import { CreateServiceInput, UpdateServiceInput } from '../../../../shared/types.js';
+import { CreateServiceInput, UpdateServiceInput, ServiceSearchInput } from '../../../../shared/types.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
@@ -12,6 +12,24 @@ import { ROLES } from '../../../../shared/types.js';
 // - Clean status code responses (201 for Created).
 // - Centralized request context usage (request.user).
 // --------------------------------------------------------------------------
+
+
+/**
+ * GLOBAL SERVICE SEARCH HANDLER (Public)
+ * GET /services/search
+ */
+export async function searchServicesHandler(
+  request: FastifyRequest<{ Querystring: ServiceSearchInput }>,
+  reply: FastifyReply
+) {
+  // Gold Standard: Query logic is isolated in the service for testing and reuse
+  const result = await serviceService.searchServices(request.query);
+
+  return reply.status(200).send({
+    success: true,
+    data: result,
+  });
+}
 
 /**
  * CREATE SERVICE HANDLER

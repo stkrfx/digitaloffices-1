@@ -1,20 +1,33 @@
 import { FastifyInstance } from 'fastify';
 import * as serviceController from './service.controller.js';
-import { CreateServiceSchema, UpdateServiceSchema, GetServicesSchema, DeleteServiceSchema } from '../../../../shared/types.js';
+import { 
+  CreateServiceSchema, 
+  UpdateServiceSchema, 
+  GetServicesSchema, 
+  DeleteServiceSchema,
+  ServiceSearchSchema // Added Universal Schema
+} from '../../../../shared/types.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
 import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // SERVICE MODULE - ROUTES
 // --------------------------------------------------------------------------
-// Purpose: Define API endpoints for Service management.
-// Standards: 
-// - Schema-based validation for high performance.
-// - RBAC (Role Based Access Control) applied at the route level.
-// - Clear separation of Public and Private endpoints.
-// --------------------------------------------------------------------------
 
 export async function serviceRoutes(app: FastifyInstance) {
+  /**
+   * GLOBAL SERVICE SEARCH (Public)
+   * Gold Standard: Placed at the top to avoid route collision with :providerId.
+   */
+  app.get('/search', {
+    schema: { 
+      querystring: ServiceSearchSchema.shape.query,
+      tags: ['Service'],
+      description: 'Global discovery of all active services with filtering and pagination'
+    },
+    handler: serviceController.searchServicesHandler,
+  });
+
   /**
    * CREATE SERVICE
    * Restricted to Experts and Organizations.

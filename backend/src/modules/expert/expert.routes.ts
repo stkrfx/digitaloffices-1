@@ -3,22 +3,36 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import * as expertController from './expert.controller.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
-import { ROLES } from '../../../../shared/types.js';
+import { ROLES, ExpertSearchSchema, UpdateExpertProfileSchema } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // EXPERT ROUTES
-// --------------------------------------------------------------------------
-// Purpose: Expose Expert profile management endpoints.
-// Standards:
-// - Uses 'fastify-type-provider-zod' 
-// - Public Read / Protected Write 
 // --------------------------------------------------------------------------
 
 export async function expertRoutes(app: FastifyInstance) {
   const router = app.withTypeProvider<ZodTypeProvider>();
 
-  // GET /experts/:username
-  // Publicly accessible, cached via Redis in the service layer
+  // 1. SEARCH EXPERTS (Public)
+  // Gold Standard: Placed before /:username to avoid route collision.
+  router.get(
+    '/search',
+    {
+      schema: {
+        description: 'Search and filter experts with pagination',
+        tags: ['Expert'],
+        querystring: ExpertSearchSchema.shape.query,
+        response: {
+          200: z.object({
+            success: z.boolean(),
+            data: z.any() // Structured response handled in service/shared types
+          }),
+        },
+      },
+    },
+    expertController.searchExpertsHandler
+  );
+
+  // 2. GET BY USERNAME (Public)
   router.get(
     '/:username',
     {
@@ -38,7 +52,7 @@ export async function expertRoutes(app: FastifyInstance) {
               avatarUrl: z.string().nullable(),
               headline: z.string().nullable(),
               bio: z.string().nullable(),
-              hourlyRate: z.number().nullable(), // Decimal types can be tricky in JSON, often string/number
+              hourlyRate: z.number().nullable(),
               specialties: z.array(z.string()),
               isVerified: z.boolean(),
               createdAt: z.date(),
@@ -50,8 +64,7 @@ export async function expertRoutes(app: FastifyInstance) {
     expertController.getProfileHandler
   );
 
-  // PATCH /experts/me
-  // Protected: Only the logged-in expert can update their own profile
+  // 3. PATCH ME (Protected)
   router.patch(
     '/me',
     {
@@ -59,7 +72,7 @@ export async function expertRoutes(app: FastifyInstance) {
       schema: {
         description: 'Update own expert profile',
         tags: ['Expert'],
-        body: expertController.UpdateExpertProfileSchema,
+        body: UpdateExpertProfileSchema,
         response: {
           200: z.object({
             success: z.boolean(),
