@@ -317,6 +317,10 @@ export type ExpertWhereInput = {
   specialties?: Prisma.StringNullableListFilter<"Expert">
   isVerified?: Prisma.BoolFilter<"Expert"> | boolean
   refreshSessions?: Prisma.RefreshSessionListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  availability?: Prisma.AvailabilityListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
 }
 
 export type ExpertOrderByWithRelationInput = {
@@ -339,6 +343,10 @@ export type ExpertOrderByWithRelationInput = {
   specialties?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   refreshSessions?: Prisma.RefreshSessionOrderByRelationAggregateInput
+  services?: Prisma.ServiceOrderByRelationAggregateInput
+  availability?: Prisma.AvailabilityOrderByRelationAggregateInput
+  bookings?: Prisma.BookingOrderByRelationAggregateInput
+  preferences?: Prisma.UserPreferenceOrderByWithRelationInput
 }
 
 export type ExpertWhereUniqueInput = Prisma.AtLeast<{
@@ -364,6 +372,10 @@ export type ExpertWhereUniqueInput = Prisma.AtLeast<{
   specialties?: Prisma.StringNullableListFilter<"Expert">
   isVerified?: Prisma.BoolFilter<"Expert"> | boolean
   refreshSessions?: Prisma.RefreshSessionListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  availability?: Prisma.AvailabilityListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
 }, "id" | "email" | "googleId" | "username">
 
 export type ExpertOrderByWithAggregationInput = {
@@ -436,6 +448,10 @@ export type ExpertCreateInput = {
   specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
   isVerified?: boolean
   refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutExpertInput
 }
 
 export type ExpertUncheckedCreateInput = {
@@ -458,6 +474,10 @@ export type ExpertUncheckedCreateInput = {
   specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
   isVerified?: boolean
   refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityUncheckedCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutExpertInput
 }
 
 export type ExpertUpdateInput = {
@@ -480,6 +500,10 @@ export type ExpertUpdateInput = {
   specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutExpertNestedInput
 }
 
 export type ExpertUncheckedUpdateInput = {
@@ -502,6 +526,10 @@ export type ExpertUncheckedUpdateInput = {
   specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUncheckedUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutExpertNestedInput
 }
 
 export type ExpertCreateManyInput = {
@@ -649,6 +677,11 @@ export type ExpertNullableScalarRelationFilter = {
   isNot?: Prisma.ExpertWhereInput | null
 }
 
+export type ExpertScalarRelationFilter = {
+  is?: Prisma.ExpertWhereInput
+  isNot?: Prisma.ExpertWhereInput
+}
+
 export type ExpertCreatespecialtiesInput = {
   set: string[]
 }
@@ -666,6 +699,68 @@ export type ExpertUpdatespecialtiesInput = {
   push?: string | string[]
 }
 
+export type ExpertCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutServicesInput, Prisma.ExpertUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutServicesInput
+  connect?: Prisma.ExpertWhereUniqueInput
+}
+
+export type ExpertUpdateOneWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutServicesInput, Prisma.ExpertUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.ExpertUpsertWithoutServicesInput
+  disconnect?: Prisma.ExpertWhereInput | boolean
+  delete?: Prisma.ExpertWhereInput | boolean
+  connect?: Prisma.ExpertWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpertUpdateToOneWithWhereWithoutServicesInput, Prisma.ExpertUpdateWithoutServicesInput>, Prisma.ExpertUncheckedUpdateWithoutServicesInput>
+}
+
+export type ExpertCreateNestedOneWithoutAvailabilityInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutAvailabilityInput, Prisma.ExpertUncheckedCreateWithoutAvailabilityInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutAvailabilityInput
+  connect?: Prisma.ExpertWhereUniqueInput
+}
+
+export type ExpertUpdateOneRequiredWithoutAvailabilityNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutAvailabilityInput, Prisma.ExpertUncheckedCreateWithoutAvailabilityInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutAvailabilityInput
+  upsert?: Prisma.ExpertUpsertWithoutAvailabilityInput
+  connect?: Prisma.ExpertWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpertUpdateToOneWithWhereWithoutAvailabilityInput, Prisma.ExpertUpdateWithoutAvailabilityInput>, Prisma.ExpertUncheckedUpdateWithoutAvailabilityInput>
+}
+
+export type ExpertCreateNestedOneWithoutBookingsInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutBookingsInput, Prisma.ExpertUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutBookingsInput
+  connect?: Prisma.ExpertWhereUniqueInput
+}
+
+export type ExpertUpdateOneWithoutBookingsNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutBookingsInput, Prisma.ExpertUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutBookingsInput
+  upsert?: Prisma.ExpertUpsertWithoutBookingsInput
+  disconnect?: Prisma.ExpertWhereInput | boolean
+  delete?: Prisma.ExpertWhereInput | boolean
+  connect?: Prisma.ExpertWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpertUpdateToOneWithWhereWithoutBookingsInput, Prisma.ExpertUpdateWithoutBookingsInput>, Prisma.ExpertUncheckedUpdateWithoutBookingsInput>
+}
+
+export type ExpertCreateNestedOneWithoutPreferencesInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutPreferencesInput, Prisma.ExpertUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutPreferencesInput
+  connect?: Prisma.ExpertWhereUniqueInput
+}
+
+export type ExpertUpdateOneWithoutPreferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpertCreateWithoutPreferencesInput, Prisma.ExpertUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutPreferencesInput
+  upsert?: Prisma.ExpertUpsertWithoutPreferencesInput
+  disconnect?: Prisma.ExpertWhereInput | boolean
+  delete?: Prisma.ExpertWhereInput | boolean
+  connect?: Prisma.ExpertWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpertUpdateToOneWithWhereWithoutPreferencesInput, Prisma.ExpertUpdateWithoutPreferencesInput>, Prisma.ExpertUncheckedUpdateWithoutPreferencesInput>
+}
+
 export type ExpertCreateNestedOneWithoutRefreshSessionsInput = {
   create?: Prisma.XOR<Prisma.ExpertCreateWithoutRefreshSessionsInput, Prisma.ExpertUncheckedCreateWithoutRefreshSessionsInput>
   connectOrCreate?: Prisma.ExpertCreateOrConnectWithoutRefreshSessionsInput
@@ -680,6 +775,470 @@ export type ExpertUpdateOneWithoutRefreshSessionsNestedInput = {
   delete?: Prisma.ExpertWhereInput | boolean
   connect?: Prisma.ExpertWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ExpertUpdateToOneWithWhereWithoutRefreshSessionsInput, Prisma.ExpertUpdateWithoutRefreshSessionsInput>, Prisma.ExpertUncheckedUpdateWithoutRefreshSessionsInput>
+}
+
+export type ExpertCreateWithoutServicesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertUncheckedCreateWithoutServicesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityUncheckedCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertCreateOrConnectWithoutServicesInput = {
+  where: Prisma.ExpertWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutServicesInput, Prisma.ExpertUncheckedCreateWithoutServicesInput>
+}
+
+export type ExpertUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.ExpertUpdateWithoutServicesInput, Prisma.ExpertUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutServicesInput, Prisma.ExpertUncheckedCreateWithoutServicesInput>
+  where?: Prisma.ExpertWhereInput
+}
+
+export type ExpertUpdateToOneWithWhereWithoutServicesInput = {
+  where?: Prisma.ExpertWhereInput
+  data: Prisma.XOR<Prisma.ExpertUpdateWithoutServicesInput, Prisma.ExpertUncheckedUpdateWithoutServicesInput>
+}
+
+export type ExpertUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertUncheckedUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUncheckedUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertCreateWithoutAvailabilityInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertUncheckedCreateWithoutAvailabilityInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertCreateOrConnectWithoutAvailabilityInput = {
+  where: Prisma.ExpertWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutAvailabilityInput, Prisma.ExpertUncheckedCreateWithoutAvailabilityInput>
+}
+
+export type ExpertUpsertWithoutAvailabilityInput = {
+  update: Prisma.XOR<Prisma.ExpertUpdateWithoutAvailabilityInput, Prisma.ExpertUncheckedUpdateWithoutAvailabilityInput>
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutAvailabilityInput, Prisma.ExpertUncheckedCreateWithoutAvailabilityInput>
+  where?: Prisma.ExpertWhereInput
+}
+
+export type ExpertUpdateToOneWithWhereWithoutAvailabilityInput = {
+  where?: Prisma.ExpertWhereInput
+  data: Prisma.XOR<Prisma.ExpertUpdateWithoutAvailabilityInput, Prisma.ExpertUncheckedUpdateWithoutAvailabilityInput>
+}
+
+export type ExpertUpdateWithoutAvailabilityInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertUncheckedUpdateWithoutAvailabilityInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertCreateWithoutBookingsInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertUncheckedCreateWithoutBookingsInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityUncheckedCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutExpertInput
+}
+
+export type ExpertCreateOrConnectWithoutBookingsInput = {
+  where: Prisma.ExpertWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutBookingsInput, Prisma.ExpertUncheckedCreateWithoutBookingsInput>
+}
+
+export type ExpertUpsertWithoutBookingsInput = {
+  update: Prisma.XOR<Prisma.ExpertUpdateWithoutBookingsInput, Prisma.ExpertUncheckedUpdateWithoutBookingsInput>
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutBookingsInput, Prisma.ExpertUncheckedCreateWithoutBookingsInput>
+  where?: Prisma.ExpertWhereInput
+}
+
+export type ExpertUpdateToOneWithWhereWithoutBookingsInput = {
+  where?: Prisma.ExpertWhereInput
+  data: Prisma.XOR<Prisma.ExpertUpdateWithoutBookingsInput, Prisma.ExpertUncheckedUpdateWithoutBookingsInput>
+}
+
+export type ExpertUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertUncheckedUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUncheckedUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutExpertNestedInput
+}
+
+export type ExpertCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutExpertInput
+}
+
+export type ExpertUncheckedCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  username: string
+  avatarUrl?: string | null
+  headline?: string | null
+  bio?: string | null
+  hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
+  isVerified?: boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutExpertInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityUncheckedCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutExpertInput
+}
+
+export type ExpertCreateOrConnectWithoutPreferencesInput = {
+  where: Prisma.ExpertWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutPreferencesInput, Prisma.ExpertUncheckedCreateWithoutPreferencesInput>
+}
+
+export type ExpertUpsertWithoutPreferencesInput = {
+  update: Prisma.XOR<Prisma.ExpertUpdateWithoutPreferencesInput, Prisma.ExpertUncheckedUpdateWithoutPreferencesInput>
+  create: Prisma.XOR<Prisma.ExpertCreateWithoutPreferencesInput, Prisma.ExpertUncheckedCreateWithoutPreferencesInput>
+  where?: Prisma.ExpertWhereInput
+}
+
+export type ExpertUpdateToOneWithWhereWithoutPreferencesInput = {
+  where?: Prisma.ExpertWhereInput
+  data: Prisma.XOR<Prisma.ExpertUpdateWithoutPreferencesInput, Prisma.ExpertUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type ExpertUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutExpertNestedInput
+}
+
+export type ExpertUncheckedUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutExpertNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUncheckedUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutExpertNestedInput
 }
 
 export type ExpertCreateWithoutRefreshSessionsInput = {
@@ -701,6 +1260,10 @@ export type ExpertCreateWithoutRefreshSessionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
   isVerified?: boolean
+  services?: Prisma.ServiceCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutExpertInput
 }
 
 export type ExpertUncheckedCreateWithoutRefreshSessionsInput = {
@@ -722,6 +1285,10 @@ export type ExpertUncheckedCreateWithoutRefreshSessionsInput = {
   hourlyRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   specialties?: Prisma.ExpertCreatespecialtiesInput | string[]
   isVerified?: boolean
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutExpertInput
+  availability?: Prisma.AvailabilityUncheckedCreateNestedManyWithoutExpertInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutExpertInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutExpertInput
 }
 
 export type ExpertCreateOrConnectWithoutRefreshSessionsInput = {
@@ -759,6 +1326,10 @@ export type ExpertUpdateWithoutRefreshSessionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  services?: Prisma.ServiceUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutExpertNestedInput
 }
 
 export type ExpertUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -780,6 +1351,10 @@ export type ExpertUncheckedUpdateWithoutRefreshSessionsInput = {
   hourlyRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   specialties?: Prisma.ExpertUpdatespecialtiesInput | string[]
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutExpertNestedInput
+  availability?: Prisma.AvailabilityUncheckedUpdateManyWithoutExpertNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutExpertNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutExpertNestedInput
 }
 
 
@@ -789,10 +1364,16 @@ export type ExpertUncheckedUpdateWithoutRefreshSessionsInput = {
 
 export type ExpertCountOutputType = {
   refreshSessions: number
+  services: number
+  availability: number
+  bookings: number
 }
 
 export type ExpertCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshSessions?: boolean | ExpertCountOutputTypeCountRefreshSessionsArgs
+  services?: boolean | ExpertCountOutputTypeCountServicesArgs
+  availability?: boolean | ExpertCountOutputTypeCountAvailabilityArgs
+  bookings?: boolean | ExpertCountOutputTypeCountBookingsArgs
 }
 
 /**
@@ -810,6 +1391,27 @@ export type ExpertCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  */
 export type ExpertCountOutputTypeCountRefreshSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefreshSessionWhereInput
+}
+
+/**
+ * ExpertCountOutputType without action
+ */
+export type ExpertCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceWhereInput
+}
+
+/**
+ * ExpertCountOutputType without action
+ */
+export type ExpertCountOutputTypeCountAvailabilityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AvailabilityWhereInput
+}
+
+/**
+ * ExpertCountOutputType without action
+ */
+export type ExpertCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookingWhereInput
 }
 
 
@@ -833,6 +1435,10 @@ export type ExpertSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   specialties?: boolean
   isVerified?: boolean
   refreshSessions?: boolean | Prisma.Expert$refreshSessionsArgs<ExtArgs>
+  services?: boolean | Prisma.Expert$servicesArgs<ExtArgs>
+  availability?: boolean | Prisma.Expert$availabilityArgs<ExtArgs>
+  bookings?: boolean | Prisma.Expert$bookingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.Expert$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.ExpertCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["expert"]>
 
@@ -902,6 +1508,10 @@ export type ExpertSelectScalar = {
 export type ExpertOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "googleId" | "isBlocked" | "deletedAt" | "emailVerifiedAt" | "emailVerificationToken" | "createdAt" | "updatedAt" | "name" | "username" | "avatarUrl" | "headline" | "bio" | "hourlyRate" | "specialties" | "isVerified", ExtArgs["result"]["expert"]>
 export type ExpertInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshSessions?: boolean | Prisma.Expert$refreshSessionsArgs<ExtArgs>
+  services?: boolean | Prisma.Expert$servicesArgs<ExtArgs>
+  availability?: boolean | Prisma.Expert$availabilityArgs<ExtArgs>
+  bookings?: boolean | Prisma.Expert$bookingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.Expert$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.ExpertCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ExpertIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -911,6 +1521,10 @@ export type $ExpertPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Expert"
   objects: {
     refreshSessions: Prisma.$RefreshSessionPayload<ExtArgs>[]
+    services: Prisma.$ServicePayload<ExtArgs>[]
+    availability: Prisma.$AvailabilityPayload<ExtArgs>[]
+    bookings: Prisma.$BookingPayload<ExtArgs>[]
+    preferences: Prisma.$UserPreferencePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1326,6 +1940,10 @@ readonly fields: ExpertFieldRefs;
 export interface Prisma__ExpertClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   refreshSessions<T extends Prisma.Expert$refreshSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expert$refreshSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  services<T extends Prisma.Expert$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expert$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  availability<T extends Prisma.Expert$availabilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expert$availabilityArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookings<T extends Prisma.Expert$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expert$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preferences<T extends Prisma.Expert$preferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expert$preferencesArgs<ExtArgs>>): Prisma.Prisma__UserPreferenceClient<runtime.Types.Result.GetResult<Prisma.$UserPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1782,6 +2400,97 @@ export type Expert$refreshSessionsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.RefreshSessionScalarFieldEnum | Prisma.RefreshSessionScalarFieldEnum[]
+}
+
+/**
+ * Expert.services
+ */
+export type Expert$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Service
+   */
+  select?: Prisma.ServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Service
+   */
+  omit?: Prisma.ServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceInclude<ExtArgs> | null
+  where?: Prisma.ServiceWhereInput
+  orderBy?: Prisma.ServiceOrderByWithRelationInput | Prisma.ServiceOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceScalarFieldEnum | Prisma.ServiceScalarFieldEnum[]
+}
+
+/**
+ * Expert.availability
+ */
+export type Expert$availabilityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Availability
+   */
+  select?: Prisma.AvailabilitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Availability
+   */
+  omit?: Prisma.AvailabilityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AvailabilityInclude<ExtArgs> | null
+  where?: Prisma.AvailabilityWhereInput
+  orderBy?: Prisma.AvailabilityOrderByWithRelationInput | Prisma.AvailabilityOrderByWithRelationInput[]
+  cursor?: Prisma.AvailabilityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AvailabilityScalarFieldEnum | Prisma.AvailabilityScalarFieldEnum[]
+}
+
+/**
+ * Expert.bookings
+ */
+export type Expert$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Booking
+   */
+  select?: Prisma.BookingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Booking
+   */
+  omit?: Prisma.BookingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingInclude<ExtArgs> | null
+  where?: Prisma.BookingWhereInput
+  orderBy?: Prisma.BookingOrderByWithRelationInput | Prisma.BookingOrderByWithRelationInput[]
+  cursor?: Prisma.BookingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * Expert.preferences
+ */
+export type Expert$preferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPreference
+   */
+  select?: Prisma.UserPreferenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPreference
+   */
+  omit?: Prisma.UserPreferenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPreferenceInclude<ExtArgs> | null
+  where?: Prisma.UserPreferenceWhereInput
 }
 
 /**

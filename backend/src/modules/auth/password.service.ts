@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { prisma } from '../../db/index.js';
+import { prisma, getPrismaDelegate } from '../../db/index.js';
 import { Role, ROLES } from '../../../../shared/types.js';
 import { hashPassword } from '../../utils/crypto.js';
 import { sendPasswordResetEmail } from '../../utils/mailer.js';
@@ -19,16 +19,6 @@ interface ResetTokenPayload {
   id: string;
   role: Role;
   type: 'password_reset';
-}
-
-function getPrismaDelegate(role: Role) {
-  switch (role) {
-    case ROLES.USER: return prisma.user;
-    case ROLES.EXPERT: return prisma.expert;
-    case ROLES.ORGANIZATION: return prisma.organization;
-    case ROLES.ADMIN: return prisma.admin;
-    default: throw new Error('Invalid role');
-  }
 }
 
 /**

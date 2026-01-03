@@ -255,6 +255,9 @@ export type OrganizationWhereInput = {
   websiteUrl?: Prisma.StringNullableFilter<"Organization"> | string | null
   regNumber?: Prisma.StringNullableFilter<"Organization"> | string | null
   refreshSessions?: Prisma.RefreshSessionListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -273,6 +276,9 @@ export type OrganizationOrderByWithRelationInput = {
   websiteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   regNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   refreshSessions?: Prisma.RefreshSessionOrderByRelationAggregateInput
+  services?: Prisma.ServiceOrderByRelationAggregateInput
+  bookings?: Prisma.BookingOrderByRelationAggregateInput
+  preferences?: Prisma.UserPreferenceOrderByWithRelationInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -294,6 +300,9 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   websiteUrl?: Prisma.StringNullableFilter<"Organization"> | string | null
   regNumber?: Prisma.StringNullableFilter<"Organization"> | string | null
   refreshSessions?: Prisma.RefreshSessionListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferenceNullableScalarRelationFilter, Prisma.UserPreferenceWhereInput> | null
 }, "id" | "email" | "googleId">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -352,6 +361,9 @@ export type OrganizationCreateInput = {
   websiteUrl?: string | null
   regNumber?: string | null
   refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -370,6 +382,9 @@ export type OrganizationUncheckedCreateInput = {
   websiteUrl?: string | null
   regNumber?: string | null
   refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -388,6 +403,9 @@ export type OrganizationUpdateInput = {
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -406,6 +424,9 @@ export type OrganizationUncheckedUpdateInput = {
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -515,6 +536,54 @@ export type OrganizationNullableScalarRelationFilter = {
   isNot?: Prisma.OrganizationWhereInput | null
 }
 
+export type OrganizationCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutServicesInput, Prisma.OrganizationUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutServicesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutServicesInput, Prisma.OrganizationUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.OrganizationUpsertWithoutServicesInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutServicesInput, Prisma.OrganizationUpdateWithoutServicesInput>, Prisma.OrganizationUncheckedUpdateWithoutServicesInput>
+}
+
+export type OrganizationCreateNestedOneWithoutBookingsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutBookingsInput, Prisma.OrganizationUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutBookingsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutBookingsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutBookingsInput, Prisma.OrganizationUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutBookingsInput
+  upsert?: Prisma.OrganizationUpsertWithoutBookingsInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutBookingsInput, Prisma.OrganizationUpdateWithoutBookingsInput>, Prisma.OrganizationUncheckedUpdateWithoutBookingsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutPreferencesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPreferencesInput, Prisma.OrganizationUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPreferencesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutPreferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPreferencesInput, Prisma.OrganizationUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPreferencesInput
+  upsert?: Prisma.OrganizationUpsertWithoutPreferencesInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutPreferencesInput, Prisma.OrganizationUpdateWithoutPreferencesInput>, Prisma.OrganizationUncheckedUpdateWithoutPreferencesInput>
+}
+
 export type OrganizationCreateNestedOneWithoutRefreshSessionsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutRefreshSessionsInput, Prisma.OrganizationUncheckedCreateWithoutRefreshSessionsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutRefreshSessionsInput
@@ -529,6 +598,294 @@ export type OrganizationUpdateOneWithoutRefreshSessionsNestedInput = {
   delete?: Prisma.OrganizationWhereInput | boolean
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutRefreshSessionsInput, Prisma.OrganizationUpdateWithoutRefreshSessionsInput>, Prisma.OrganizationUncheckedUpdateWithoutRefreshSessionsInput>
+}
+
+export type OrganizationCreateWithoutServicesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutServicesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutServicesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutServicesInput, Prisma.OrganizationUncheckedCreateWithoutServicesInput>
+}
+
+export type OrganizationUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutServicesInput, Prisma.OrganizationUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutServicesInput, Prisma.OrganizationUncheckedCreateWithoutServicesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutServicesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutServicesInput, Prisma.OrganizationUncheckedUpdateWithoutServicesInput>
+}
+
+export type OrganizationUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutBookingsInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutBookingsInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutBookingsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutBookingsInput, Prisma.OrganizationUncheckedCreateWithoutBookingsInput>
+}
+
+export type OrganizationUpsertWithoutBookingsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutBookingsInput, Prisma.OrganizationUncheckedUpdateWithoutBookingsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutBookingsInput, Prisma.OrganizationUncheckedCreateWithoutBookingsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutBookingsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutBookingsInput, Prisma.OrganizationUncheckedUpdateWithoutBookingsInput>
+}
+
+export type OrganizationUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  googleId?: string | null
+  isBlocked?: boolean
+  deletedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  emailVerificationToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  companyName: string
+  logoUrl?: string | null
+  websiteUrl?: string | null
+  regNumber?: string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutPreferencesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPreferencesInput, Prisma.OrganizationUncheckedCreateWithoutPreferencesInput>
+}
+
+export type OrganizationUpsertWithoutPreferencesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutPreferencesInput, Prisma.OrganizationUncheckedUpdateWithoutPreferencesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPreferencesInput, Prisma.OrganizationUncheckedCreateWithoutPreferencesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutPreferencesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutPreferencesInput, Prisma.OrganizationUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type OrganizationUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refreshSessions?: Prisma.RefreshSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutRefreshSessionsInput = {
@@ -546,6 +903,9 @@ export type OrganizationCreateWithoutRefreshSessionsInput = {
   logoUrl?: string | null
   websiteUrl?: string | null
   regNumber?: string | null
+  services?: Prisma.ServiceCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
@@ -563,6 +923,9 @@ export type OrganizationUncheckedCreateWithoutRefreshSessionsInput = {
   logoUrl?: string | null
   websiteUrl?: string | null
   regNumber?: string | null
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutOrganizationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutOrganizationInput
+  preferences?: Prisma.UserPreferenceUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutRefreshSessionsInput = {
@@ -596,6 +959,9 @@ export type OrganizationUpdateWithoutRefreshSessionsInput = {
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  services?: Prisma.ServiceUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
@@ -613,6 +979,9 @@ export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
   logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   regNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutOrganizationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutOrganizationNestedInput
+  preferences?: Prisma.UserPreferenceUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 
@@ -622,10 +991,14 @@ export type OrganizationUncheckedUpdateWithoutRefreshSessionsInput = {
 
 export type OrganizationCountOutputType = {
   refreshSessions: number
+  services: number
+  bookings: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshSessions?: boolean | OrganizationCountOutputTypeCountRefreshSessionsArgs
+  services?: boolean | OrganizationCountOutputTypeCountServicesArgs
+  bookings?: boolean | OrganizationCountOutputTypeCountBookingsArgs
 }
 
 /**
@@ -645,6 +1018,20 @@ export type OrganizationCountOutputTypeCountRefreshSessionsArgs<ExtArgs extends 
   where?: Prisma.RefreshSessionWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookingWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -662,6 +1049,9 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   websiteUrl?: boolean
   regNumber?: boolean
   refreshSessions?: boolean | Prisma.Organization$refreshSessionsArgs<ExtArgs>
+  services?: boolean | Prisma.Organization$servicesArgs<ExtArgs>
+  bookings?: boolean | Prisma.Organization$bookingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.Organization$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -719,6 +1109,9 @@ export type OrganizationSelectScalar = {
 export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "googleId" | "isBlocked" | "deletedAt" | "emailVerifiedAt" | "emailVerificationToken" | "createdAt" | "updatedAt" | "companyName" | "logoUrl" | "websiteUrl" | "regNumber", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshSessions?: boolean | Prisma.Organization$refreshSessionsArgs<ExtArgs>
+  services?: boolean | Prisma.Organization$servicesArgs<ExtArgs>
+  bookings?: boolean | Prisma.Organization$bookingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.Organization$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -728,6 +1121,9 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "Organization"
   objects: {
     refreshSessions: Prisma.$RefreshSessionPayload<ExtArgs>[]
+    services: Prisma.$ServicePayload<ExtArgs>[]
+    bookings: Prisma.$BookingPayload<ExtArgs>[]
+    preferences: Prisma.$UserPreferencePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1139,6 +1535,9 @@ readonly fields: OrganizationFieldRefs;
 export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   refreshSessions<T extends Prisma.Organization$refreshSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$refreshSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  services<T extends Prisma.Organization$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookings<T extends Prisma.Organization$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preferences<T extends Prisma.Organization$preferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$preferencesArgs<ExtArgs>>): Prisma.Prisma__UserPreferenceClient<runtime.Types.Result.GetResult<Prisma.$UserPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1591,6 +1990,73 @@ export type Organization$refreshSessionsArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.RefreshSessionScalarFieldEnum | Prisma.RefreshSessionScalarFieldEnum[]
+}
+
+/**
+ * Organization.services
+ */
+export type Organization$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Service
+   */
+  select?: Prisma.ServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Service
+   */
+  omit?: Prisma.ServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceInclude<ExtArgs> | null
+  where?: Prisma.ServiceWhereInput
+  orderBy?: Prisma.ServiceOrderByWithRelationInput | Prisma.ServiceOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceScalarFieldEnum | Prisma.ServiceScalarFieldEnum[]
+}
+
+/**
+ * Organization.bookings
+ */
+export type Organization$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Booking
+   */
+  select?: Prisma.BookingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Booking
+   */
+  omit?: Prisma.BookingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingInclude<ExtArgs> | null
+  where?: Prisma.BookingWhereInput
+  orderBy?: Prisma.BookingOrderByWithRelationInput | Prisma.BookingOrderByWithRelationInput[]
+  cursor?: Prisma.BookingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * Organization.preferences
+ */
+export type Organization$preferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPreference
+   */
+  select?: Prisma.UserPreferenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPreference
+   */
+  omit?: Prisma.UserPreferenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPreferenceInclude<ExtArgs> | null
+  where?: Prisma.UserPreferenceWhereInput
 }
 
 /**
