@@ -19,7 +19,9 @@ import { passwordRoutes } from './modules/auth/password.routes.js';
 import { userRoutes } from './modules/user/user.routes.js';
 import { expertRoutes } from './modules/expert/expert.routes.js';
 import { organizationRoutes } from './modules/organization/organization.routes.js';
-import { serviceRoutes } from './modules/service/service.routes.js'; // New Module
+import { serviceRoutes } from './modules/service/service.routes.js';
+import { availabilityRoutes } from './modules/availability/availability.routes.js';
+import { bookingRoutes } from './modules/booking/booking.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
     const app = fastify({
@@ -100,7 +102,11 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(userRoutes, { prefix: '/users' });
     await app.register(expertRoutes, { prefix: '/experts' });
     await app.register(organizationRoutes, { prefix: '/organizations' });
-    await app.register(serviceRoutes, { prefix: '/services' }); // Registered New Module
+
+    // Domain Specific (New Modules)
+    await app.register(serviceRoutes, { prefix: '/services' });
+    await app.register(availabilityRoutes, { prefix: '/availability' });
+    await app.register(bookingRoutes, { prefix: '/bookings' });
 
     // 10. Global Error Handler
     app.setErrorHandler((error: FastifyError, request, reply) => {
