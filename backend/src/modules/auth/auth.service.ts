@@ -12,55 +12,50 @@ import { hashPassword, verifyPassword, generateRandomToken, hashToken } from '..
 import { sendVerificationEmail } from '../../utils/mailer.js'
 import { getPrismaDelegate } from '../../db/index.js';
 import { generateUniqueUsername } from '../../utils/username.js';
-
-// --------------------------------------------------------------------------
-// AUTHENTICATION SERVICE
-// --------------------------------------------------------------------------
-// Purpose: Core business logic for Siloed Identity Management.
-// Standards:
-// - Role-specific database tables (No single User table) 
-// - Dual Token Generation (Access + Refresh) 
-// - Secure Session Management (Refresh Token Hashing) 
-// - Username Generation for Experts 
-// --------------------------------------------------------------------------
+// [NEW] Import our professional error classes
+import { 
+    BadRequestError, 
+    ConflictError, 
+    UnauthorizedError, 
+    ForbiddenError 
+} from '../../utils/errors.js';
 
 /**
- * REGISTER
- * Handles creation for all 4 roles strictly in their respective silos.
+ * AUTHENTICATION SERVICE
+ * Standards: 
+ * - Generic Login Failures: We use the same error message for "user not found" and "wrong password" 
+ * to prevent User Enumeration attacks.
+ * - Domain-Driven Errors: Decouples business logic from HTTP transport layer.
  */
-export async function register(role: Role, data: UserRegisterInput | ExpertRegisterInput | OrganizationRegisterInput) {
 
+export async function register(role: Role, data: UserRegisterInput | ExpertRegisterInput | OrganizationRegisterInput) {
     const delegate = getPrismaDelegate(role);
     const { email, password } = data;
 
-    const disposableDomains = ['tempmail.com', 'mailinator.com', 'guerrillamail.com']; // Extend this list
+    // 1. Validate Email Domain
+    const disposableDomains = ['tempmail.com', 'mailinator.com']; 
     const domain = email.split('@')[1];
     if (disposableDomains.includes(domain)) {
-        throw new Error('Disposable email addresses are not allowed.');
+        throw new BadRequestError('Disposable email addresses are not allowed.');
     }
 
-    // 1. Check Uniqueness (Email)
-    // @ts-expect-error - Prisma delegates share 'findUnique' signature for email
+    // 2. Check Uniqueness
+    // @ts-expect-error - Prisma delegates share 'findUnique' signature
     const existing = await delegate.findUnique({ where: { email } });
     if (existing) {
-        throw new Error('Email already registered for this account type.');
+        throw new ConflictError('Email already registered for this account type.');
     }
 
-    // 2. Hash Password
     const passwordHash = await hashPassword(password);
-
-    // 3. Generate Verification Token
     const emailVerificationToken = generateRandomToken();
 
-    // 4. Prepare Common Data
     const commonData = {
         email,
         passwordHash,
         emailVerificationToken,
-        emailVerifiedAt: null, // Require verification 
+        emailVerifiedAt: null,
     };
 
-    // 5. Create Record based on Role
     let result;
     if (role === ROLES.USER) {
         const input = data as UserRegisterInput;
@@ -69,17 +64,12 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
         });
     } else if (role === ROLES.EXPERT) {
         const input = data as ExpertRegisterInput;
-        // Auto-generate username if not provided or just force generation based on requirements
-        // Prompt says: "Auto-generate a unique handle" 
-        // However, schema Input has 'username'. We prioritize auto-generation to match prompt strictly.
-        
         const username = await generateUniqueUsername();
-
         result = await prisma.expert.create({
             data: {
                 ...commonData,
                 name: input.name,
-                username, // Enforced auto-generation
+                username,
             }
         });
     } else if (role === ROLES.ORGANIZATION) {
@@ -93,10 +83,9 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
             }
         });
     } else {
-        throw new Error('Admin registration is not public.');
+        throw new BadRequestError('Admin registration is not public.');
     }
 
-    // 6. Send Verification Email (Mocking for now as per prompt instructions if SMTP not set)
     await sendVerificationEmail(result.email, emailVerificationToken);
 
     return {
@@ -107,44 +96,36 @@ export async function register(role: Role, data: UserRegisterInput | ExpertRegis
     };
 }
 
-/**
- * LOGIN
- * Authenticates user and issues Dual Tokens.
- */
 export async function login(role: Role, data: LoginInput, ipAddress: string, userAgent: string) {
     const delegate = getPrismaDelegate(role);
 
     // 1. Find Account
-    // @ts-expect-error - Dynamic delegate handling
+    // @ts-expect-error - Dynamic delegate
     const account = await delegate.findUnique({ where: { email: data.email } });
 
+    // GOLD STANDARD: Use generic "Invalid email or password" for 404/401 
+    // to prevent hackers from knowing which emails exist in your DB.
     if (!account) {
-        throw new Error('Invalid email or password');
+        throw new UnauthorizedError('Invalid email or password');
     }
 
-    // 2. Security Checks
-    if (account.isBlocked) throw new Error('Account is blocked');
-    if (account.deletedAt) throw new Error('Account is deleted'); // Soft Delete Check 
-    if (!account.emailVerifiedAt) throw new Error('Email not verified'); // Verification Check 
-    if (!account.passwordHash) throw new Error('Invalid login method (try OAuth)');
+    if (account.isBlocked) throw new ForbiddenError('Account is blocked');
+    if (account.deletedAt) throw new UnauthorizedError('Invalid email or password'); 
+    if (!account.emailVerifiedAt) throw new ForbiddenError('Please verify your email before logging in'); 
+    if (!account.passwordHash) throw new BadRequestError('Account uses Social Login. Please use Google to sign in.');
 
-    // 3. Verify Password
+    // 2. Verify Password
     const isValid = await verifyPassword(data.password, account.passwordHash);
     if (!isValid) {
-        throw new Error('Invalid email or password');
+        throw new UnauthorizedError('Invalid email or password');
     }
 
-    // 4. Generate Tokens
-    // Access Token Payload
+    // 3. Dual Token Generation Logic
     const payload: JwtPayload = { id: account.id, role };
-
-    // Refresh Token (Long-lived opaque string)
     const refreshToken = generateRandomToken(64);
     const refreshTokenHash = hashToken(refreshToken);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 Days 
 
-    // 5. Store Session
-    // Polymorphic relation handling
     const sessionData: any = {
         tokenHash: refreshTokenHash,
         expiresAt,
@@ -152,7 +133,6 @@ export async function login(role: Role, data: LoginInput, ipAddress: string, use
         userAgent,
     };
 
-    // Set the correct foreign key
     if (role === ROLES.USER) sessionData.userId = account.id;
     if (role === ROLES.EXPERT) sessionData.expertId = account.id;
     if (role === ROLES.ORGANIZATION) sessionData.organizationId = account.id;
@@ -161,7 +141,7 @@ export async function login(role: Role, data: LoginInput, ipAddress: string, use
     await prisma.refreshSession.create({ data: sessionData });
 
     return {
-        accessTokenPayload: payload, // Controller will sign this
+        accessTokenPayload: payload,
         refreshToken,
         account: {
             id: account.id,
@@ -171,35 +151,18 @@ export async function login(role: Role, data: LoginInput, ipAddress: string, use
     };
 }
 
-/**
- * LOGOUT
- * Revokes the specific Refresh Session.
- */
-export async function logout(refreshToken: string) {
-    const tokenHash = hashToken(refreshToken);
-    await prisma.refreshSession.deleteMany({
-        where: { tokenHash }
-    });
-}
-
-/**
- * REFRESH TOKEN
- * Rotates the session.
- */
 export async function refresh(refreshToken: string, ipAddress: string, userAgent: string) {
     const tokenHash = hashToken(refreshToken);
 
-    // 1. Find Session
     const session = await prisma.refreshSession.findUnique({
         where: { tokenHash },
         include: { User: true, Expert: true, Organization: true, Admin: true }
     });
 
     if (!session || session.expiresAt < new Date()) {
-        throw new Error('Invalid or expired refresh token');
+        throw new UnauthorizedError('Invalid or expired refresh token');
     }
 
-    // 2. Identify User & Role
     const roleMap = { User: ROLES.USER, Expert: ROLES.EXPERT, Organization: ROLES.ORGANIZATION, Admin: ROLES.ADMIN };
     let account: any = null;
     let role: Role | null = null;
@@ -212,13 +175,11 @@ export async function refresh(refreshToken: string, ipAddress: string, userAgent
         }
     }
     
-    if (!account?.id || !role) throw new Error('Orphaned session');
+    if (!account?.id || !role) throw new UnauthorizedError('Session integrity compromised');
     
-    // 4. Rotate Token (Security Best Practice)
-    // Delete old session
+    // TOKEN ROTATION: Security best practice
     await prisma.refreshSession.delete({ where: { id: session.id } });
 
-    // Create new session
     const newRefreshToken = generateRandomToken(64);
     const newHash = hashToken(newRefreshToken);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -241,4 +202,11 @@ export async function refresh(refreshToken: string, ipAddress: string, userAgent
         accessTokenPayload: { id: account.id, role } as JwtPayload,
         refreshToken: newRefreshToken
     };
+}
+
+export async function logout(refreshToken: string) {
+    const tokenHash = hashToken(refreshToken);
+    await prisma.refreshSession.deleteMany({
+        where: { tokenHash }
+    });
 }

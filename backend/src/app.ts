@@ -11,6 +11,7 @@ import { ZodError } from 'zod';
 import { env } from './env.js';
 import { disconnectDB } from './db/index.js';
 import { registerCleanupJob } from './jobs/cleanup.js';
+import { AppError } from './utils/errors.js';
 
 // Route Imports
 import { authRoutes } from './modules/auth/auth.routes.js';
@@ -112,34 +113,52 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(reviewRoutes, { prefix: '/reviews' });
     await app.register(preferenceRoutes, { prefix: '/preferences' });
 
-    // 10. Global Error Handler
+
+    // 10. Global Error Handler [REFACTORED]
     app.setErrorHandler((error: FastifyError, request, reply) => {
+        // Log error details for the server
         request.log.error(error);
 
-        if (error instanceof ZodError) {
-            return reply.status(422).send({
+        // A. Handle Custom Application Errors (Domain logic)
+        if (error instanceof AppError) {
+            return reply.status(error.statusCode).send({
                 success: false,
-                message: 'Validation Error',
-                error: { code: 'VALIDATION_ERROR', details: error.issues },
+                message: error.message,
+                error: { code: error.code },
             });
         }
 
+        // B. Handle Zod Validation Errors
+        if (error instanceof ZodError) {
+            return reply.status(422).send({
+                success: false,
+                message: 'Validation failed',
+                error: {
+                    code: 'VALIDATION_ERROR',
+                    details: error.issues.map(issue => ({
+                        path: issue.path.join('.'),
+                        message: issue.message
+                    }))
+                },
+            });
+        }
+
+        // C. Handle Authentication Errors (Fastify JWT specific)
         if (error.statusCode === 401 || error.code?.startsWith('FST_JWT_')) {
             return reply.status(401).send({
                 success: false,
-                message: 'Unauthorized',
+                message: 'Authentication failed',
                 error: { code: 'UNAUTHORIZED' },
             });
         }
 
+        // D. Fallback for Internal Server Errors
         const statusCode = error.statusCode || 500;
-        const message = error.statusCode === 500 && env.NODE_ENV === 'production'
-            ? 'Internal Server Error'
-            : error.message;
+        const isProd = env.NODE_ENV === 'production';
 
         return reply.status(statusCode).send({
             success: false,
-            message,
+            message: isProd && statusCode === 500 ? 'Internal Server Error' : error.message,
             error: { code: error.code || 'INTERNAL_SERVER_ERROR' },
         });
     });

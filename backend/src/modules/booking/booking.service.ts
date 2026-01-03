@@ -1,83 +1,152 @@
 import { prisma } from '../../db/index.js';
 import { isTimeWithinAvailability } from '../availability/availability.service.js';
 import { ROLES, BookingStatusType } from '../../../../shared/types.js';
+import { BookingStatus } from '../../generated/prisma/enums.js';
+import { 
+    BadRequestError, 
+    ConflictError, 
+    NotFoundError, 
+    UnauthorizedError 
+} from '../../utils/errors.js';
 
 // --------------------------------------------------------------------------
 // BOOKING MODULE - BUSINESS LOGIC
 // --------------------------------------------------------------------------
 // Purpose: Core orchestration for scheduling sessions.
 // Standards: 
-// - Transactional Integrity (ACID).
-// - Double-entry validation (Availability + Conflict checks).
-// - Rich relational data fetching.
+// - Transactional Integrity (ACID): Uses $transaction to prevent race conditions.
+// - Domain Errors: Uses specific AppErrors for cleaner API responses.
+// - Double-booking Protection: Strict overlap checks within the transaction.
 // --------------------------------------------------------------------------
 
 /**
  * CREATE BOOKING
- * The most critical business logic in the system.
+ * Handles the critical logic of reserving a time slot.
  */
 export async function createBooking(data: {
   userId: string;
   serviceId: string;
   startTime: Date;
+  notes?: string;
 }) {
+  const { userId, serviceId, startTime, notes } = data;
+
+  // 1. Fetch Service details (outside TX to keep the transaction short)
+  const service = await prisma.service.findUnique({
+    where: { id: serviceId, isActive: true },
+    include: { Expert: true, Organization: true },
+  });
+
+  if (!service) {
+    throw new NotFoundError('Service not found or is currently inactive');
+  }
+
+  const durationMs = service.durationMin * 60000;
+  const endTime = new Date(startTime.getTime() + durationMs);
+  const expertId = service.expertId;
+  const organizationId = service.organizationId;
+
+  // 2. Execute Atomic Transaction to prevent Race Conditions
   return await prisma.$transaction(async (tx) => {
-    // 1. Fetch Service details to get duration and price
-    const service = await tx.service.findUnique({
-      where: { id: data.serviceId, isActive: true },
-      include: { Expert: true, Organization: true },
-    });
-
-    if (!service) throw new Error('Service not found or inactive');
-
-    const durationMs = service.durationMin * 60000;
-    const endTime = new Date(data.startTime.getTime() + durationMs);
-    const expertId = service.expertId;
-    const organizationId = service.organizationId;
-
-    // 2. Gold Standard: Verify Provider's General Availability
-    // Note: In a production app, we use the service helper but within the TX context
+    
+    // A. Verify Provider's General Availability
     if (expertId) {
-      const isAvailable = await isTimeWithinAvailability(expertId, data.startTime, service.durationMin);
-      if (!isAvailable) throw new Error('Selected time is outside the expert\'s working hours');
+      const isAvailable = await isTimeWithinAvailability(expertId, startTime, service.durationMin);
+      if (!isAvailable) {
+          throw new BadRequestError('Selected time is outside the provider\'s working hours');
+      }
     }
 
-    // 3. Gold Standard: Check for Double-Booking (Overlaps)
-    const existingConflict = await tx.booking.findFirst({
+    // B. Check for Overlapping Bookings (Double-Booking Protection)
+    const overlap = await tx.booking.findFirst({
       where: {
         OR: [
-          { expertId: expertId ?? undefined },
-          { organizationId: organizationId ?? undefined }
-        ],
-        status: { in: ['CONFIRMED', 'PENDING'] },
+            { 
+              expertId: { 
+                equals: expertId ?? undefined, 
+                not: null 
+              } 
+            },
+            { 
+              organizationId: { 
+                equals: organizationId ?? undefined, 
+                not: null 
+              } 
+            }
+          ],
+        status: { in: [BookingStatus.CONFIRMED, BookingStatus.PENDING] },
         AND: [
           { startTime: { lt: endTime } },
-          { endTime: { gt: data.startTime } }
+          { endTime: { gt: startTime } }
         ]
       }
     });
 
-    if (existingConflict) {
-      throw new Error('This time slot is already booked');
+    if (overlap) {
+      throw new ConflictError('This time slot is already reserved');
     }
 
-    // 4. Create the Booking
+    // C. Create the Booking
+    // Note: We cache totalPrice and provider IDs directly for reliable history/accounting
     return await tx.booking.create({
       data: {
-        startTime: data.startTime,
-        endTime,
-        totalPrice: service.price,
-        userId: data.userId,
-        serviceId: data.serviceId,
+        userId,
+        serviceId,
         expertId,
         organizationId,
-        status: 'PENDING', // Default state until payment or manual confirmation
+        startTime,
+        endTime,
+        totalPrice: service.price,
+        notes,
+        status: BookingStatus.PENDING,
       },
       include: {
         Service: { select: { title: true } },
         User: { select: { name: true, email: true } }
       }
     });
+  });
+}
+
+/**
+ * UPDATE BOOKING STATUS
+ * Standardizes status changes (Confirm/Cancel) with authorization checks.
+ */
+export async function updateBookingStatus(
+  bookingId: string, 
+  status: BookingStatusType,
+  actorId: string 
+) {
+  // 1. Verify existence and authorization
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+      OR: [
+        { userId: actorId },
+        { expertId: actorId },
+        { organizationId: actorId }
+      ]
+    }
+  });
+
+  if (!booking) {
+    throw new NotFoundError('Booking not found or you are not authorized to modify it');
+  }
+
+  // 2. Prevent redundant updates (e.g., cancelling an already cancelled booking)
+  if (booking.status === status) {
+    throw new BadRequestError(`Booking is already ${status.toLowerCase()}`);
+  }
+
+  // 3. Gold Standard: Apply business rules for status transitions
+  // Example: Users can't "Confirm" their own booking if it's pending provider action
+  if (status === 'CONFIRMED' && booking.userId === actorId) {
+      throw new UnauthorizedError('Users cannot confirm their own bookings');
+  }
+
+  return await prisma.booking.update({
+    where: { id: bookingId },
+    data: { status },
   });
 }
 
@@ -107,32 +176,5 @@ export async function getProviderBookings(providerId: string, role: typeof ROLES
       User: { select: { name: true, avatarUrl: true } },
     },
     orderBy: { startTime: 'desc' },
-  });
-}
-
-/**
- * UPDATE BOOKING STATUS (Cancel/Confirm)
- */
-export async function updateBookingStatus(
-  bookingId: string, 
-  status: BookingStatusType,
-  actorId: string // Ensure only involved parties can change status
-) {
-  const booking = await prisma.booking.findFirst({
-    where: {
-      id: bookingId,
-      OR: [
-        { userId: actorId },
-        { expertId: actorId },
-        { organizationId: actorId }
-      ]
-    }
-  });
-
-  if (!booking) throw new Error('Booking not found or unauthorized');
-
-  return await prisma.booking.update({
-    where: { id: bookingId },
-    data: { status },
   });
 }
