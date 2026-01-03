@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, LoginInput, ROLES } from "@shared/types";
+import { LoginSchema, LoginInput, ROLES } from "../../../../../shared/types";
 import { useAuth } from "../hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import {
