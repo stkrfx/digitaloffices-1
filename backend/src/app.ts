@@ -163,6 +163,10 @@ export async function buildApp(): Promise<FastifyInstance> {
         });
     });
 
+    app.get('/', async () => {
+        return { message: 'Welcome to Digital Offices API' };
+    });
+    
     // 11. Health Check
     app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
 

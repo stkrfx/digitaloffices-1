@@ -12,7 +12,7 @@ import isEmail from 'email-validator'; // Already in your package.json
 // Recommendation: For the "Disposable" list, 
 // Senior devs use a package like 'disposable-email-domains' 
 // which is updated weekly by the community.
-import disposableList from 'disposable-email-domains' assert { type: 'json' };
+import disposableList from 'disposable-email-domains' with { type: 'json' };
 
 const DISPOSABLE_SET = new Set(disposableList);
 

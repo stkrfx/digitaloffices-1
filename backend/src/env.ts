@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import dotenv from 'dotenv';
+
+// Load variables from .env into process.env
+dotenv.config();
 
 /**
  * ENVIRONMENT VARIABLE VALIDATION (GOLD STANDARD)
