@@ -1,5 +1,6 @@
 import { prisma } from '../../db/index.js';
 import { isTimeWithinAvailability } from '../availability/availability.service.js';
+import { ROLES } from '../../../../shared/types.js';
 
 // --------------------------------------------------------------------------
 // BOOKING MODULE - BUSINESS LOGIC
@@ -98,9 +99,9 @@ export async function getUserBookings(userId: string) {
 /**
  * GET PROVIDER BOOKINGS
  */
-export async function getProviderBookings(providerId: string, role: 'EXPERT' | 'ORGANIZATION') {
-  return await prisma.booking.findMany({
-    where: role === 'EXPERT' ? { expertId: providerId } : { organizationId: providerId },
+export async function getProviderBookings(providerId: string, role: typeof ROLES.EXPERT | typeof ROLES.ORGANIZATION) {
+    return await prisma.booking.findMany({
+      where: role === ROLES.EXPERT ? { expertId: providerId } : { organizationId: providerId },
     include: {
       Service: true,
       User: { select: { name: true, avatarUrl: true } },

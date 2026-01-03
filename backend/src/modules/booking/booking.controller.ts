@@ -18,30 +18,30 @@ import { ROLES } from '../../../../shared/types.js';
  * POST /bookings
  */
 export async function createBookingHandler(
-  request: FastifyRequest<{ Body: CreateBookingInput }>,
-  reply: FastifyReply
+    request: FastifyRequest<{ Body: CreateBookingInput }>,
+    reply: FastifyReply
 ) {
-  const user = request.user;
+    const user = request.user;
 
-  // Gold Standard: Ensure only standard Users can initiate a booking
-  if (user.role !== ROLES.USER) {
-    return reply.status(403).send({
-      success: false,
-      message: 'Only clients can create bookings',
+    // Gold Standard: Ensure only standard Users can initiate a booking
+    if (user.role !== ROLES.USER) {
+        return reply.status(403).send({
+            success: false,
+            message: 'Only clients can create bookings',
+        });
+    }
+
+    const booking = await bookingService.createBooking({
+        userId: user.id,
+        serviceId: request.body.serviceId,
+        startTime: request.body.startTime,
     });
-  }
 
-  const booking = await bookingService.createBooking({
-    userId: user.id,
-    serviceId: request.body.serviceId,
-    startTime: request.body.startTime,
-  });
-
-  return reply.status(201).send({
-    success: true,
-    message: 'Booking request sent successfully',
-    data: booking,
-  });
+    return reply.status(201).send({
+        success: true,
+        message: 'Booking request sent successfully',
+        data: booking,
+    });
 }
 
 /**
@@ -49,17 +49,17 @@ export async function createBookingHandler(
  * GET /bookings/me
  */
 export async function getUserBookingsHandler(
-  request: FastifyRequest,
-  reply: FastifyReply
+    request: FastifyRequest,
+    reply: FastifyReply
 ) {
-  const user = request.user;
+    const user = request.user;
 
-  const bookings = await bookingService.getUserBookings(user.id);
+    const bookings = await bookingService.getUserBookings(user.id);
 
-  return reply.status(200).send({
-    success: true,
-    data: bookings,
-  });
+    return reply.status(200).send({
+        success: true,
+        data: bookings,
+    });
 }
 
 /**
@@ -67,26 +67,26 @@ export async function getUserBookingsHandler(
  * GET /bookings/provider
  */
 export async function getProviderBookingsHandler(
-  request: FastifyRequest<{ Querystring: { role: 'EXPERT' | 'ORGANIZATION' } }>,
-  reply: FastifyReply
+    request: FastifyRequest<{ Querystring: { role: typeof ROLES.EXPERT | typeof ROLES.ORGANIZATION } }>,
+    reply: FastifyReply
 ) {
-  const user = request.user;
-  const { role } = request.query;
+    const user = request.user;
+    const { role } = request.query;
 
-  // Gold Standard: Security check to ensure the user is querying their own provider type
-  if (user.role !== role) {
-    return reply.status(403).send({
-      success: false,
-      message: `Access denied. You are logged in as ${user.role}, not ${role}`,
+    // Gold Standard: Security check to ensure the user is querying their own provider type
+    if (user.role !== role) {
+        return reply.status(403).send({
+            success: false,
+            message: `Access denied. You are logged in as ${user.role}, not ${role}`,
+        });
+    }
+
+    const bookings = await bookingService.getProviderBookings(user.id, role);
+
+    return reply.status(200).send({
+        success: true,
+        data: bookings,
     });
-  }
-
-  const bookings = await bookingService.getProviderBookings(user.id, role);
-
-  return reply.status(200).send({
-    success: true,
-    data: bookings,
-  });
 }
 
 /**
@@ -94,25 +94,25 @@ export async function getProviderBookingsHandler(
  * PATCH /bookings/:bookingId/status
  */
 export async function updateBookingStatusHandler(
-  request: FastifyRequest<{ 
-    Params: { bookingId: string }; 
-    Body: UpdateBookingStatusInput 
-  }>,
-  reply: FastifyReply
+    request: FastifyRequest<{
+        Params: { bookingId: string };
+        Body: UpdateBookingStatusInput
+    }>,
+    reply: FastifyReply
 ) {
-  const user = request.user;
-  const { bookingId } = request.params;
-  const { status } = request.body;
+    const user = request.user;
+    const { bookingId } = request.params;
+    const { status } = request.body;
 
-  const updatedBooking = await bookingService.updateBookingStatus(
-    bookingId,
-    status,
-    user.id
-  );
+    const updatedBooking = await bookingService.updateBookingStatus(
+        bookingId,
+        status,
+        user.id
+    );
 
-  return reply.status(200).send({
-    success: true,
-    message: `Booking status updated to ${status}`,
-    data: updatedBooking,
-  });
+    return reply.status(200).send({
+        success: true,
+        message: `Booking status updated to ${status}`,
+        data: updatedBooking,
+    });
 }
