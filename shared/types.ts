@@ -11,6 +11,8 @@ export const ROLES = {
     ADMIN: "admin",
 } as const;
 
+export const sharedString: string = "Hello from the Shared Folder!";
+
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
 export const ADMIN_ROLES = {
